@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { auth, db } from "@/lib/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { doc, setDoc, collection, query, where, getDocs, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -17,6 +17,20 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists() && userDoc.data().isAdmin) {
+          router.push("/admin");
+        } else {
+          router.push("/dashboard");
+        }
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
 
   // Phone number input handler with 11 digits limit
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {

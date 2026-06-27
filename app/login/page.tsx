@@ -1,8 +1,8 @@
   "use client";
 
-  import { useState } from "react";
+  import { useState, useEffect } from "react";
   import { auth, db } from "@/lib/firebase";
-  import { signInWithEmailAndPassword } from "firebase/auth";
+  import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
   import { doc, getDoc } from "firebase/firestore";
   import { useRouter } from "next/navigation";
   import Link from "next/link";
@@ -13,6 +13,20 @@
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists() && userDoc.data().isAdmin) {
+            router.push("/admin");
+          } else {
+            router.push("/dashboard");
+          }
+        }
+      });
+      return () => unsubscribe();
+    }, [router]);
 
     const handleLogin = async (e: React.FormEvent) => {
       e.preventDefault();

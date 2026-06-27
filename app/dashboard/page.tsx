@@ -487,7 +487,7 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
         // Fetch purchased plans
         const q = query(collection(db, "purchases"), where("userId", "==", userId));
         const snapshot = await getDocs(q);
-        const purchases = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const purchases = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as any));
         setPurchasedProducts(purchases);
 
         // Fetch today's ad progress for each plan
@@ -515,10 +515,10 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
     fetchData();
   }, [userId]);
 
-  const handleRecharge = (amount: number) => { setBalance(prev => prev + amount); };
+  const handleRecharge = (amount: number) => { setBalance((prev: number) => prev + amount); };
   const handleWithdraw = (amount: number, type: string) => {
-    if (type === "task") setBalance(prev => prev - amount);
-    else setReferralBalance(prev => prev - amount);
+    if (type === "task") setBalance((prev: number) => prev - amount);
+    else setReferralBalance((prev: number) => prev - amount);
   };
 
   return (
