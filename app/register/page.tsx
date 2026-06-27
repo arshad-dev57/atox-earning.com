@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { auth, db } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc, collection, query, where, getDocs, getDoc } from "firebase/firestore";
@@ -124,7 +125,7 @@ export default function RegisterPage() {
       });
 
       console.log("[Register] User created with referredBy:", referredBy);
-      alert("Registration successful! Please login.");
+      toast.success("Registration successful! Please login.");
       router.push("/login");
     } catch (error: any) {
       console.error("Registration error:", error);

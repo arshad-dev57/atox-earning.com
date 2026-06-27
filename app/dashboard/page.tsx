@@ -34,6 +34,8 @@ import {
   CheckCircleIcon,
   ClockIcon,
   BellIcon,
+  ListBulletIcon,
+  ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 
 // Helper to format currency
@@ -49,9 +51,11 @@ const formatCurrency = (amount: number) => {
 const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab: (tab: string) => void }) => {
   const menuItems = [
     { id: "home", label: "Home", icon: HomeIcon },
+    { id: "tasks", label: "Tasks", icon: ListBulletIcon },
     { id: "products", label: "Products", icon: ShoppingBagIcon },
     { id: "team", label: "Team", icon: UsersIcon },
     { id: "notifications", label: "Notifications", icon: BellIcon },
+    { id: "support", label: "Customer Care", icon: ChatBubbleLeftRightIcon },
     { id: "profile", label: "Profile", icon: UserIcon },
   ];
 
@@ -79,15 +83,13 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group ${
-                    activeTab === item.id
+                  className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group ${activeTab === item.id
                       ? "bg-white/20 text-white shadow-lg shadow-black/20"
                       : "text-white/70 hover:bg-white/10 hover:text-white"
-                  }`}
+                    }`}
                 >
-                  <Icon className={`w-6 h-6 ${
-                    activeTab === item.id ? "text-white" : "text-white/50 group-hover:text-white/70"
-                  }`} />
+                  <Icon className={`w-6 h-6 ${activeTab === item.id ? "text-white" : "text-white/50 group-hover:text-white/70"
+                    }`} />
                   <span className="font-medium">{item.label}</span>
                   {activeTab === item.id && (
                     <span className="ml-auto w-1.5 h-8 bg-white rounded-full" />
@@ -121,11 +123,10 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all ${
-                  activeTab === item.id
+                className={`flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all ${activeTab === item.id
                     ? "text-emerald-600"
                     : "text-gray-400 hover:text-gray-600"
-                }`}
+                  }`}
               >
                 <Icon className="w-6 h-6" />
                 <span className="text-[10px] font-medium">{item.label}</span>
@@ -147,11 +148,10 @@ const RechargeModal = ({ isOpen, onClose, onRecharge, userId }: { isOpen: boolea
   const [paymentScreenshot, setPaymentScreenshot] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Bank details - you can move this to environment variables or database
   const bankDetails = {
-    bankName: process.env.NEXT_PUBLIC_BANK_NAME || "Access Bank",
-    accountNumber: process.env.NEXT_PUBLIC_BANK_ACCOUNT || "1234567890",
-    accountName: process.env.NEXT_PUBLIC_ACCOUNT_NAME || "Atox Earnings Platform",
+    bankName: "Opay",
+    accountNumber: "9098373121",
+    accountName: "wisdom chima innocent",
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -179,7 +179,7 @@ const RechargeModal = ({ isOpen, onClose, onRecharge, userId }: { isOpen: boolea
         bankDetails,
         createdAt: serverTimestamp(),
       });
-      
+
       onClose();
       alert(`Recharge request of ₦${amount} submitted! It will reflect in your balance upon approval.`);
     } catch (error) {
@@ -299,7 +299,7 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const withdrawAmount = parseInt(amount);
-    
+
     if (!userId) {
       alert("User not authenticated");
       return;
@@ -332,13 +332,13 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
         balanceType: balanceType,
         createdAt: serverTimestamp(),
       });
-      
+
       const userRef = doc(db, "users", uid);
       const balanceField = isTask ? "balance" : "referralBalance";
       await updateDoc(userRef, {
         [balanceField]: increment(-withdrawAmount),
       });
-      
+
       onWithdraw(withdrawAmount, balanceType);
       onClose();
       alert(`Withdrawal of ₦${withdrawAmount} submitted successfully!`);
@@ -420,7 +420,7 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
             <input
               type="text"
               value={bankDetails.bankName}
-              onChange={(e) => setBankDetails({...bankDetails, bankName: e.target.value})}
+              onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
               placeholder="Bank Name"
               className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all"
               required
@@ -428,7 +428,7 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
             <input
               type="text"
               value={bankDetails.accountNumber}
-              onChange={(e) => setBankDetails({...bankDetails, accountNumber: e.target.value})}
+              onChange={(e) => setBankDetails({ ...bankDetails, accountNumber: e.target.value })}
               placeholder="Account Number"
               className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all"
               required
@@ -436,7 +436,7 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
             <input
               type="text"
               value={bankDetails.accountName}
-              onChange={(e) => setBankDetails({...bankDetails, accountName: e.target.value})}
+              onChange={(e) => setBankDetails({ ...bankDetails, accountName: e.target.value })}
               placeholder="Account Name"
               className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all"
               required
@@ -657,7 +657,7 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-900">Your Plans</h2>
         </div>
-        
+
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
@@ -715,11 +715,10 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
                   {/* Watch Ad Button */}
                   <button
                     onClick={() => router.push(`/plan/${product.productId}`)}
-                    className={`w-full py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
-                      isDone
+                    className={`w-full py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${isDone
                         ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
                         : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/30 active:scale-95"
-                    }`}
+                      }`}
                   >
                     {isDone ? (
                       "✅ Completed (View Details)"
@@ -744,6 +743,279 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
   );
 };
 
+// --- Tasks Tab ---
+const TasksTab = ({ userId }: { userId: string | null }) => {
+  const router = useRouter();
+  const [purchasedProducts, setPurchasedProducts] = useState<any[]>([]);
+  const [adProgress, setAdProgress] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(true);
+  const todayKey = new Date().toISOString().split("T")[0];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!userId) return;
+      try {
+        const q = query(collection(db, "purchases"), where("userId", "==", userId));
+        const snapshot = await getDocs(q);
+        const purchases = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as any));
+        setPurchasedProducts(purchases);
+
+        const progressMap: Record<string, number> = {};
+        for (const plan of purchases) {
+          const progressRef = doc(db, "adProgress", `${userId}_${plan.productId}_${todayKey}`);
+          const progressDoc = await getDoc(progressRef);
+          progressMap[plan.productId] = progressDoc.exists() ? progressDoc.data().adsWatched || 0 : 0;
+        }
+        setAdProgress(progressMap);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [userId]);
+
+  return (
+    <div className="p-6 pb-24 lg:pb-6 space-y-6 bg-gradient-to-br from-gray-50 via-white to-blue-50/30 min-h-screen">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">My Tasks</h1>
+        <p className="text-gray-500 mt-1">Watch ads daily to earn from your active plans</p>
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : purchasedProducts.length === 0 ? (
+        <div className="bg-white rounded-2xl p-16 text-center border-2 border-dashed border-gray-200 shadow-sm">
+          <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
+            <ListBulletIcon className="w-12 h-12 text-blue-500" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-800 mb-2">No Active Tasks</h3>
+          <p className="text-gray-500 mb-6">You haven't purchased any plans yet.<br />Buy a plan to unlock your daily ad tasks.</p>
+          <p className="text-sm text-blue-600 font-semibold">Go to Products → Buy a Plan to get started!</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {purchasedProducts.map((product) => {
+            const watched = adProgress[product.productId] || 0;
+            const totalAds = product.ads || 20;
+            const earningPerAd = (product.dailyIncome || 750) / totalAds;
+            const isDone = watched >= totalAds;
+            const progressPct = Math.min((watched / totalAds) * 100, 100);
+
+            return (
+              <div
+                key={product.id}
+                className={`bg-white rounded-2xl p-6 shadow-sm border-2 transition-all hover:shadow-md ${isDone ? "border-emerald-200" : "border-blue-100"
+                  }`}
+              >
+                {/* Header */}
+                <div className="flex items-start justify-between mb-5">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-2xl">{isDone ? "✅" : "📺"}</span>
+                      <h4 className="font-bold text-gray-900 text-lg">{product.name}</h4>
+                    </div>
+                    <span
+                      className={`text-xs font-semibold px-3 py-1 rounded-full ${isDone
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-blue-100 text-blue-700"
+                        }`}
+                    >
+                      {isDone ? "Completed Today" : "Active — Watching"}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-400">Daily Income</p>
+                    <p className="text-xl font-bold text-emerald-600">{formatCurrency(product.dailyIncome)}</p>
+                  </div>
+                </div>
+
+                {/* Progress */}
+                <div className="mb-5">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-gray-600 font-medium">Ads Watched Today</span>
+                    <span className="font-bold text-gray-900">{watched} / {totalAds}</span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-4 overflow-hidden">
+                    <div
+                      className={`h-4 rounded-full transition-all duration-700 ${isDone
+                          ? "bg-gradient-to-r from-emerald-400 to-green-500"
+                          : "bg-gradient-to-r from-blue-500 to-indigo-600"
+                        }`}
+                      style={{ width: `${progressPct}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-gray-400 mt-2">
+                    <span>Earned: {formatCurrency(watched * earningPerAd)}</span>
+                    <span>Remaining: {formatCurrency((totalAds - watched) * earningPerAd)}</span>
+                  </div>
+                </div>
+
+                {/* Earning info row */}
+                <div className="grid grid-cols-3 gap-2 mb-5">
+                  <div className="bg-gray-50 rounded-xl p-3 text-center">
+                    <p className="text-xs text-gray-500">Per Ad</p>
+                    <p className="text-sm font-bold text-gray-900">{formatCurrency(earningPerAd)}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3 text-center">
+                    <p className="text-xs text-gray-500">Total Ads</p>
+                    <p className="text-sm font-bold text-gray-900">{totalAds}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3 text-center">
+                    <p className="text-xs text-gray-500">Left Today</p>
+                    <p className="text-sm font-bold text-orange-600">{Math.max(0, totalAds - watched)}</p>
+                  </div>
+                </div>
+
+                {/* CTA Button */}
+                <button
+                  onClick={() => router.push(`/plan/${product.productId}`)}
+                  className={`w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 active:scale-95 ${isDone
+                      ? "bg-gray-100 text-gray-500 cursor-default"
+                      : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/30"
+                    }`}
+                >
+                  {isDone ? (
+                    <><CheckCircleIcon className="w-5 h-5 text-emerald-500" /><span>All Done for Today!</span></>
+                  ) : (
+                    <><span>📺</span><span>Start Watching Ads</span></>
+                  )}
+                </button>
+
+                <p className="text-xs text-gray-400 text-center mt-2">
+                  Purchased: {new Date(product.purchasedAt?.toDate?.() || Date.now()).toLocaleDateString()}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// --- Customer Care Tab ---
+const CustomerCareTab = () => {
+  const whatsappNumber = "+2349072485676";
+  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/\D/g, "")}`;
+
+  return (
+    <div className="p-6 pb-24 lg:pb-6 min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50/20">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Customer Care</h1>
+        <p className="text-gray-500 mt-1">We're here to help — reach us anytime</p>
+      </div>
+
+      <div className="max-w-lg mx-auto space-y-6">
+        {/* WhatsApp Card */}
+        <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+          <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-8 py-6">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                <svg className="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-white">WhatsApp Support</h2>
+                <p className="text-green-100 text-sm">Fast response — usually within minutes</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="px-8 py-6 space-y-6">
+            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+              <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <ChatBubbleLeftRightIcon className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">WhatsApp Number</p>
+                <p className="text-lg font-bold text-gray-900 tracking-wide">+234 907 2485676</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-emerald-50 rounded-xl p-3 text-center">
+                <span className="text-2xl">⚡</span>
+                <p className="text-xs font-semibold text-emerald-700 mt-1">Fast Response</p>
+              </div>
+              <div className="bg-blue-50 rounded-xl p-3 text-center">
+                <span className="text-2xl">🕐</span>
+                <p className="text-xs font-semibold text-blue-700 mt-1">24/7 Support</p>
+              </div>
+              <div className="bg-purple-50 rounded-xl p-3 text-center">
+                <span className="text-2xl">🔒</span>
+                <p className="text-xs font-semibold text-purple-700 mt-1">Secure & Private</p>
+              </div>
+              <div className="bg-orange-50 rounded-xl p-3 text-center">
+                <span className="text-2xl">🇳🇬</span>
+                <p className="text-xs font-semibold text-orange-700 mt-1">Nigeria Based</p>
+              </div>
+            </div>
+
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-3 w-full py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-bold text-lg hover:shadow-lg hover:shadow-green-500/30 transition-all active:scale-95"
+            >
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+              </svg>
+              Chat on WhatsApp
+            </a>
+
+            {/* WhatsApp Channel */}
+            <a
+              href="https://whatsapp.com/channel/0029VbCNd1kK0IBnzHsutm1a"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-4 w-full p-4 bg-gradient-to-r from-teal-50 to-green-50 border-2 border-teal-200 rounded-2xl hover:border-teal-400 hover:shadow-md transition-all group"
+            >
+              <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-green-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-teal-800 text-sm">📢 Join Our WhatsApp Channel</p>
+                <p className="text-xs text-teal-600 mt-0.5">Get updates, announcements & tips</p>
+              </div>
+              <span className="text-teal-500 text-lg">→</span>
+            </a>
+
+            <p className="text-xs text-gray-400 text-center">
+              Tap the buttons above to reach us directly or follow our channel for updates.
+            </p>
+          </div>
+        </div>
+
+        {/* FAQ hints */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <h3 className="font-bold text-gray-900 mb-4">Common Topics</h3>
+          <div className="space-y-3">
+            {[
+              { icon: "💰", text: "Recharge or withdrawal issues" },
+              { icon: "📦", text: "Product purchase questions" },
+              { icon: "🎯", text: "Ad task not working" },
+              { icon: "👥", text: "Referral & team earnings" },
+              { icon: "🏦", text: "Bank account & payment details" },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                <span className="text-xl">{item.icon}</span>
+                <span className="text-sm text-gray-700 font-medium">{item.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- Products Tab ---
 const ProductsTab = ({ userId }: { userId: string | null }) => {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
@@ -752,48 +1024,19 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
   const [submitting, setSubmitting] = useState(false);
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
   const products = [
-    {
-      id: "vip1",
-      name: "VIP 1",
-      ads: 20,
-      price: 3000,
-      term: "30 days",
-      dailyIncome: 750,
-      totalIncome: 22000,
-      color: "from-emerald-500 to-green-600",
-      badge: "Popular",
-    },
-    {
-      id: "vip2",
-      name: "VIP 2",
-      ads: 35,
-      price: 5000,
-      term: "30 days",
-      dailyIncome: 1200,
-      totalIncome: 36000,
-      color: "from-blue-500 to-indigo-600",
-      badge: "Pro",
-    },
-    {
-      id: "vip3",
-      name: "VIP 3",
-      ads: 50,
-      price: 10000,
-      term: "30 days",
-      dailyIncome: 2200,
-      totalIncome: 66000,
-      color: "from-purple-500 to-pink-600",
-      badge: "Premium",
-    },
+    { id: "vip1", name: "VIP 1", ads: 20, price: 3000, term: "30 days", dailyIncome: 750, totalIncome: 22500, color: "from-emerald-500 to-green-600", badge: "Starter" },
+    { id: "vip2", name: "VIP 2", ads: 15, price: 7000, term: "30 days", dailyIncome: 1700, totalIncome: 51000, color: "from-blue-500 to-indigo-600", badge: "Basic" },
+    { id: "vip3", name: "VIP 3", ads: 15, price: 15000, term: "30 days", dailyIncome: 3000, totalIncome: 90000, color: "from-purple-500 to-pink-600", badge: "Standard" },
+    { id: "vip4", name: "VIP 4", ads: 15, price: 35000, term: "30 days", dailyIncome: 9000, totalIncome: 270000, color: "from-orange-500 to-red-600", badge: "Advanced" },
+    { id: "vip5", name: "VIP 5", ads: 15, price: 70000, term: "30 days", dailyIncome: 18000, totalIncome: 540000, color: "from-rose-500 to-pink-700", badge: "Premium" },
+    { id: "vip6", name: "VIP 6", ads: 15, price: 100000, term: "30 days", dailyIncome: 30000, totalIncome: 900000, color: "from-yellow-500 to-amber-600", badge: "Elite" },
   ];
-
-  // Bank details - you can move this to environment variables or database
+  // Bank details
   const bankDetails = {
-    bankName: process.env.NEXT_PUBLIC_BANK_NAME || "Access Bank",
-    accountNumber: process.env.NEXT_PUBLIC_BANK_ACCOUNT || "1234567890",
-    accountName: process.env.NEXT_PUBLIC_ACCOUNT_NAME || "Atox Earnings Platform",
+    bankName: "Opay",
+    accountNumber: "9098373121",
+    accountName: "wisdom chima innocent",
   };
 
   useEffect(() => {
@@ -879,7 +1122,7 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
       setShowPaymentModal(false);
       setSelectedProduct(null);
       setPaymentScreenshot("");
-      
+
       // Refresh payments
       const q = query(collection(db, "payments"), where("userId", "==", userId));
       const snapshot = await getDocs(q);
@@ -910,10 +1153,9 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
                 className="flex items-center justify-between p-4 bg-gray-50 rounded-xl"
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                    payment.status === "approved" ? "bg-emerald-100" : 
-                    payment.status === "rejected" ? "bg-red-100" : "bg-yellow-100"
-                  }`}>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${payment.status === "approved" ? "bg-emerald-100" :
+                      payment.status === "rejected" ? "bg-red-100" : "bg-yellow-100"
+                    }`}>
                     {payment.status === "approved" ? (
                       <CheckCircleIcon className="w-5 h-5 text-emerald-600" />
                     ) : payment.status === "rejected" ? (
@@ -927,11 +1169,10 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
                     <p className="text-xs text-gray-400">{formatCurrency(payment.amount)}</p>
                   </div>
                 </div>
-                <span className={`text-xs px-3 py-1 rounded-full font-medium ${
-                  payment.status === "approved" ? "bg-emerald-50 text-emerald-600" :
-                  payment.status === "rejected" ? "bg-red-50 text-red-600" :
-                  "bg-yellow-50 text-yellow-600"
-                }`}>
+                <span className={`text-xs px-3 py-1 rounded-full font-medium ${payment.status === "approved" ? "bg-emerald-50 text-emerald-600" :
+                    payment.status === "rejected" ? "bg-red-50 text-red-600" :
+                      "bg-yellow-50 text-yellow-600"
+                  }`}>
                   {payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
                 </span>
               </div>
@@ -1299,11 +1540,10 @@ const NotificationsTab = ({ userId }: { userId: string | null }) => {
                 key={notif.id}
                 className="flex items-start gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100"
               >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                  notif.type === "success" ? "bg-emerald-100 text-emerald-600" :
-                  notif.type === "error" ? "bg-red-100 text-red-600" :
-                  "bg-blue-100 text-blue-600"
-                }`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${notif.type === "success" ? "bg-emerald-100 text-emerald-600" :
+                    notif.type === "error" ? "bg-red-100 text-red-600" :
+                      "bg-blue-100 text-blue-600"
+                  }`}>
                   <BellIcon className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
@@ -1513,9 +1753,11 @@ export default function Dashboard() {
         {activeTab === "home" && (
           <HomeTab userData={userData} userId={userId} />
         )}
+        {activeTab === "tasks" && <TasksTab userId={userId} />}
         {activeTab === "products" && <ProductsTab userId={userId} />}
         {activeTab === "team" && <TeamTab userId={userId} />}
         {activeTab === "notifications" && <NotificationsTab userId={userId} />}
+        {activeTab === "support" && <CustomerCareTab />}
         {activeTab === "profile" && (
           <ProfileTab userData={userData} userId={userId} />
         )}

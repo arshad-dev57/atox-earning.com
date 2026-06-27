@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
@@ -131,11 +132,11 @@ export default function AdminPage() {
         createdAt: serverTimestamp(),
       });
 
-      alert("Recharge approved!");
+      toast.success("Recharge approved!");
       fetchData();
     } catch (error) {
       console.error("Error approving recharge:", error);
-      alert("Failed to approve recharge.");
+      toast.error("Failed to approve recharge.");
     }
   };
 
@@ -152,11 +153,11 @@ export default function AdminPage() {
         createdAt: serverTimestamp(),
       });
 
-      alert("Recharge rejected!");
+      toast("Recharge rejected!");
       fetchData();
     } catch (error) {
       console.error("Error rejecting recharge:", error);
-      alert("Failed to reject recharge.");
+      toast.error("Failed to reject recharge.");
     }
   };
 
@@ -174,11 +175,11 @@ export default function AdminPage() {
         createdAt: serverTimestamp(),
       });
 
-      alert("Withdrawal approved!");
+      toast.success("Withdrawal approved!");
       fetchData();
     } catch (error) {
       console.error("Error approving withdrawal:", error);
-      alert("Failed to approve withdrawal.");
+      toast.error("Failed to approve withdrawal.");
     }
   };
 
@@ -200,11 +201,11 @@ export default function AdminPage() {
         createdAt: serverTimestamp(),
       });
 
-      alert("Withdrawal rejected!");
+      toast("Withdrawal rejected!");
       fetchData();
     } catch (error) {
       console.error("Error rejecting withdrawal:", error);
-      alert("Failed to reject withdrawal.");
+      toast.error("Failed to reject withdrawal.");
     }
   };
 
@@ -212,7 +213,7 @@ export default function AdminPage() {
     try {
       const product = PRODUCTS.find((p) => p.id === productId);
       if (!product) {
-        alert("Product not found!");
+        toast.error("Product not found!");
         return;
       }
 
@@ -262,11 +263,11 @@ export default function AdminPage() {
         createdAt: serverTimestamp(),
       });
 
-      alert("Payment approved!");
+      toast.success("Payment approved!");
       fetchData();
     } catch (error) {
       console.error("Error approving payment:", error);
-      alert("Failed to approve payment.");
+      toast.error("Failed to approve payment.");
     }
   };
 
@@ -283,11 +284,11 @@ export default function AdminPage() {
         createdAt: serverTimestamp(),
       });
 
-      alert("Payment rejected!");
+      toast("Payment rejected!");
       fetchData();
     } catch (error) {
       console.error("Error rejecting payment:", error);
-      alert("Failed to reject payment.");
+      toast.error("Failed to reject payment.");
     }
   };
 

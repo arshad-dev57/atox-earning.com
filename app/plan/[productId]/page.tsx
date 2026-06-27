@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import toast from "react-hot-toast";
 import { useRouter, useParams } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -153,7 +154,7 @@ export default function PlanDetailPage() {
       setAdCompleted(false);
     } catch (err) {
       console.error("Error claiming reward:", err);
-      alert("Failed to claim reward. Please try again.");
+      toast.error("Failed to claim reward. Please try again.");
     } finally {
       setClaiming(false);
     }
