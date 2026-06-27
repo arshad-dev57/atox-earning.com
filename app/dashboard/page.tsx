@@ -161,7 +161,7 @@ const RechargeModal = ({ isOpen, onClose, onRecharge, userId }: { isOpen: boolea
       return;
     }
     const uid = userId;
-    if (!amount || amount < 100) {
+    if (!amount || Number(amount) < 100) {
       alert("Minimum recharge amount is ₦100");
       return;
     }
