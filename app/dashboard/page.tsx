@@ -552,9 +552,9 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
           <p className="text-gray-500 mt-1">Here's what's happening with your earnings</p>
         </div>
         <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
-          <span className="text-sm font-medium text-gray-600">🇳🇬 Nigeria</span>
+          <span className="text-sm font-medium text-gray-600"></span>
           <span className="w-px h-6 bg-gray-200" />
-          <span className="text-sm font-semibold text-gray-900">NGN</span>
+          <span className="text-sm font-semibold text-gray-900">KJGC2944</span>
         </div>
       </div>
 

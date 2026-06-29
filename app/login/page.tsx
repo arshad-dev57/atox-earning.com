@@ -156,6 +156,13 @@ import Link from "next/link";
               <div className="text-xs text-gray-600">Payments</div>
             </div>
           </div>
+
+          {/* Adsterra Site Verification */}
+          <div className="mt-6 text-center">
+            <span className="inline-block text-xs text-gray-400 font-mono tracking-widest bg-white/40 border border-gray-200 px-3 py-1 rounded-full select-all">
+              KJGC2944
+            </span>
+          </div>
         </div>
       </div>
     );
