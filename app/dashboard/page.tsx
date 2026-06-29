@@ -19,6 +19,7 @@ import {
 } from "firebase/firestore";
 import Link from "next/link";
 import ImageUpload from "@/components/ImageUpload";
+import AdBanner from "@/components/AdBanner";
 import {
   HomeIcon,
   ShoppingBagIcon,
