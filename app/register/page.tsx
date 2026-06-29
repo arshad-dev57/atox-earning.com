@@ -149,13 +149,12 @@ export default function RegisterPage() {
         {/* Logo/Brand Section */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-3">
-            <Image
+            <img
               src="/logo.jpg"
               alt="ATOX Investment Platform Logo"
               width={180}
               height={60}
               className="object-contain rounded-xl"
-              priority
             />
           </div>
           <h1 className="text-3xl font-bold text-gray-900">Join ATOX Platform</h1>

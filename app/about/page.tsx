@@ -52,13 +52,12 @@ export default function AboutPage() {
           Back
         </button>
         <div className="flex items-center gap-3">
-          <Image
+          <img
             src="/logo.jpg"
             alt="ATOX Logo"
             width={120}
             height={40}
             className="object-contain rounded-lg"
-            priority
           />
         </div>
       </header>

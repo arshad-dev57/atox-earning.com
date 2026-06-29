@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Script from "next/script";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -39,16 +40,10 @@ export default function Home() {
       <header className="bg-white py-4 px-6 shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
-              <span className="text-xl font-bold text-emerald-600">₦</span>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Atox</h1>
-              <p className="text-sm text-gray-500">Earnings Platform</p>
-            </div>
+            <img src="/logo.jpg?v=2" alt="Atox Logo" className="h-10 w-auto" />
           </div>
           <div className="flex items-center gap-6">
-            <p className="text-2xl font-bold text-gray-900 tracking-wider">KJGC2944</p>
+            <p className="text-2xl font-bold text-gray-900 tracking-wider">NIGERIA</p>
             <button
               onClick={() => router.push("/login")}
               className="px-6 py-2 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition"
@@ -80,6 +75,27 @@ export default function Home() {
           >
             Get Started Now
           </button>
+        </div>
+        
+        {/* Adsterra Banner 468x60 */}
+        <div className="mt-12 flex justify-center">
+          <div className="bg-gray-100 rounded-lg p-4">
+            <Script id="ad-banner-468x60" strategy="afterInteractive">
+              {`
+                atOptions = {
+                  'key' : 'c0886ae1b3dd9ed31af9c5b36c6abf2f',
+                  'format' : 'iframe',
+                  'height' : 60,
+                  'width' : 468,
+                  'params' : {}
+                };
+              `}
+            </Script>
+            <Script
+              src="https://www.highperformanceformat.com/c0886ae1b3dd9ed31af9c5b36c6abf2f/invoke.js"
+              strategy="afterInteractive"
+            />
+          </div>
         </div>
       </main>
     </div>

@@ -20,6 +20,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import ImageUpload from "@/components/ImageUpload";
+import Script from "next/script";
 import {
   HomeIcon,
   ShoppingBagIcon,
@@ -67,13 +68,12 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <Image
+              <img
                 src="/logo.jpg"
                 alt="ATOX Logo"
                 width={120}
                 height={40}
                 className="object-contain rounded-lg bg-white/10 p-1"
-                priority
               />
             </div>
           </div>
@@ -554,12 +554,12 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
         <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
           <span className="text-sm font-medium text-gray-600"></span>
           <span className="w-px h-6 bg-gray-200" />
-          <span className="text-sm font-semibold text-gray-900">KJGC2944</span>
+          <span className="text-sm font-semibold text-gray-900">NIGERIA</span>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
@@ -637,6 +637,27 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
           <ArrowUpIcon className="w-5 h-5" />
           Withdraw
         </button>
+      </div>
+
+      {/* Adsterra Banner 160x300 */}
+      <div className="flex justify-center mt-6">
+        <div className="bg-gray-100 rounded-lg p-4">
+          <Script id="ad-banner-160x300" strategy="afterInteractive">
+            {`
+              atOptions = {
+                'key' : 'c0886ae1b3dd9ed31af9c5b36c6abf2f',
+                'format' : 'iframe',
+                'height' : 300,
+                'width' : 160,
+                'params' : {}
+              };
+            `}
+          </Script>
+          <Script
+            src="https://www.highperformanceformat.com/c0886ae1b3dd9ed31af9c5b36c6abf2f/invoke.js"
+            strategy="afterInteractive"
+          />
+        </div>
       </div>
 
       {/* Withdraw Info Banner */}

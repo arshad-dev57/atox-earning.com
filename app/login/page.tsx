@@ -63,13 +63,12 @@ import Link from "next/link";
           {/* Logo/Brand Section */}
           <div className="text-center mb-8">
             <div className="flex justify-center mb-3">
-              <Image
+              <img
                 src="/logo.jpg"
                 alt="ATOX Investment Platform Logo"
                 width={180}
                 height={60}
                 className="object-contain rounded-xl"
-                priority
               />
             </div>
             <h1 className="text-3xl font-bold text-gray-900">ATOX Investment Platform</h1>
@@ -160,7 +159,7 @@ import Link from "next/link";
           {/* Adsterra Site Verification */}
           <div className="mt-6 text-center">
             <span className="inline-block text-xs text-gray-400 font-mono tracking-widest bg-white/40 border border-gray-200 px-3 py-1 rounded-full select-all">
-              KJGC2944
+              NIGERIA
             </span>
           </div>
         </div>
