@@ -324,11 +324,17 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
       return;
     }
 
+    // Calculate 10% fee
+    const fee = Math.round(withdrawAmount * 0.10);
+    const finalAmount = withdrawAmount - fee;
+
     setLoading(true);
     try {
       await addDoc(collection(db, "withdrawals"), {
         userId,
         amount: withdrawAmount,
+        fee: fee,
+        finalAmount: finalAmount,
         bankDetails,
         status: "pending",
         balanceType: balanceType,
@@ -343,7 +349,7 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
 
       onWithdraw(withdrawAmount, balanceType);
       onClose();
-      alert(`Withdrawal of ₦${withdrawAmount} submitted successfully!`);
+      alert(`Withdrawal of ₦${withdrawAmount} submitted successfully! After 10% fee (₦${fee}), you will receive ₦${finalAmount}.`);
     } catch (error) {
       console.error("Error processing withdrawal:", error);
       alert("Failed to process withdrawal. Please try again.");
@@ -371,6 +377,16 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
             <div>
               <p className="text-sm font-semibold text-yellow-800">Withdrawal Schedule</p>
               <p className="text-xs text-yellow-700">Every Friday (8 AM - 8 PM) • Minimum ₦5,000</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <span className="text-red-500 text-lg leading-none flex-shrink-0">⚠️</span>
+            <div>
+              <p className="text-sm font-semibold text-red-800">Withdrawal Fee</p>
+              <p className="text-xs text-red-700">A 10% charge will be applied to all withdrawals.</p>
             </div>
           </div>
         </div>

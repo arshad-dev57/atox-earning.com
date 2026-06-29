@@ -70,8 +70,13 @@ export default function AdminPage() {
   const [recharges, setRecharges] = useState<any[]>([]);
   const [withdrawals, setWithdrawals] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
+  const [purchases, setPurchases] = useState<any[]>([]);
+  const [rechargeHistory, setRechargeHistory] = useState<any[]>([]);
+  const [withdrawalHistory, setWithdrawalHistory] = useState<any[]>([]);
+  const [paymentHistory, setPaymentHistory] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
   const router = useRouter();
 
   // Strict authentication check checking for the admin flag
