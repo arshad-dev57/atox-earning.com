@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Crop Logo</title>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="status">Cropping...</div>
+  <script>
+    const img = new Image();
+    img.src = 'logo.jpg';
+    img.onload = () => {
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+
+      // The white box is roughly at y: 44.5% to 61.5% of height, full width
+      // Let's crop exactly the center rectangle
+      const cropX = 0;
+      const cropY = img.height * 0.445;
+      const cropWidth = img.width;
+      const cropHeight = img.height * 0.17; // about 170px of 1000px
+
+      canvas.width = cropWidth;
+      canvas.height = cropHeight;
+
+      ctx.drawImage(img, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+
+      // Convert to base64 and put it on body
+      const dataUrl = canvas.toDataURL('image/png');
+      const resultDiv = document.createElement('div');
+      resultDiv.id = 'result';
+      resultDiv.innerText = dataUrl;
+      document.body.appendChild(resultDiv);
+      document.getElementById('status').innerText = 'Done!';
+    };
+  </script>
+</body>
+</html>

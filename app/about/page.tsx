@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeftIcon, ShieldCheckIcon, LightBulbIcon, UserGroupIcon, ChartBarIcon, ScaleIcon } from "@heroicons/react/24/outline";
 
@@ -50,11 +51,15 @@ export default function AboutPage() {
           <ArrowLeftIcon className="w-4 h-4" />
           Back
         </button>
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-emerald-500/20 border border-emerald-500/30 rounded-xl flex items-center justify-center">
-            <span className="text-xl font-bold text-emerald-400">₦</span>
-          </div>
-          <span className="font-bold text-lg tracking-tight">ATOX</span>
+        <div className="flex items-center gap-3">
+          <Image
+            src="/logo.jpg"
+            alt="ATOX Logo"
+            width={120}
+            height={40}
+            className="object-contain rounded-lg"
+            priority
+          />
         </div>
       </header>
 

@@ -1,11 +1,12 @@
-  "use client";
+"use client";
 
-  import { useState, useEffect } from "react";
-  import { auth, db } from "@/lib/firebase";
-  import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-  import { doc, getDoc } from "firebase/firestore";
-  import { useRouter } from "next/navigation";
-  import Link from "next/link";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { auth, db } from "@/lib/firebase";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
   export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -61,12 +62,17 @@
         <div className="w-full max-w-md">
           {/* Logo/Brand Section */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl mb-4 shadow-lg">
-              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+            <div className="flex justify-center mb-3">
+              <Image
+                src="/logo.jpg"
+                alt="ATOX Investment Platform Logo"
+                width={180}
+                height={60}
+                className="object-contain rounded-xl"
+                priority
+              />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900">Atox Earnings</h1>
+            <h1 className="text-3xl font-bold text-gray-900">ATOX Investment Platform</h1>
             <p className="text-gray-600 mt-2">Welcome back! Login to your account</p>
             <div className="inline-flex items-center gap-1 mt-2 bg-green-100 px-3 py-1 rounded-full">
               <span className="text-sm font-semibold text-green-700">🇳🇬 Nigeria</span>

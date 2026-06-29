@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import toast from "react-hot-toast";
 import { auth, db } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
@@ -44,43 +45,42 @@ export default function RegisterPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    
+
     // Validation
     if (!fullName.trim()) {
       setError("Please enter your full name");
       return;
     }
-    
+
     if (!email.trim() || !email.includes("@")) {
       setError("Please enter a valid email address");
       return;
     }
-    
+
     if (!phone.trim()) {
       setError("Please enter your phone number");
       return;
     }
-    
+
     if (phone.length !== 11) {
       setError("Phone number must be exactly 11 digits");
       return;
     }
-    
+
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-    
+
     if (password.length < 6) {
       setError("Password must be at least 6 characters");
       return;
     }
-    
+
     setLoading(true);
 
     try {
       // 1. Look up referral code FIRST (before creating auth user)
-      //    This must run as unauthenticated so Firestore rules allow the read
       let referredBy: string | null = null;
       if (invitationCode.trim()) {
         const codeToLookup = invitationCode.trim().toUpperCase();
@@ -121,7 +121,7 @@ export default function RegisterPage() {
         updatedAt: new Date().toISOString(),
         isActive: true,
         accountStatus: "active",
-        isAdmin: false
+        isAdmin: false,
       });
 
       console.log("[Register] User created with referredBy:", referredBy);
@@ -148,12 +148,17 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         {/* Logo/Brand Section */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl mb-4 shadow-lg">
-            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-            </svg>
+          <div className="flex justify-center mb-3">
+            <Image
+              src="/logo.jpg"
+              alt="ATOX Investment Platform Logo"
+              width={180}
+              height={60}
+              className="object-contain rounded-xl"
+              priority
+            />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Join Atox Earnings</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Join ATOX Platform</h1>
           <p className="text-gray-600 mt-2">Start earning in Naira (₦) today!</p>
           <div className="inline-flex items-center gap-1 mt-2 bg-green-100 px-3 py-1 rounded-full">
             <span className="text-sm font-semibold text-green-700">🇳🇬 Nigeria Only</span>

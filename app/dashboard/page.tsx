@@ -18,8 +18,8 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import Link from "next/link";
+import Image from "next/image";
 import ImageUpload from "@/components/ImageUpload";
-import AdBanner from "@/components/AdBanner";
 import {
   HomeIcon,
   ShoppingBagIcon,
@@ -65,15 +65,16 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
       {/* Desktop Sidebar */}
       <div className="hidden lg:block w-72 h-screen sticky top-0 bg-gradient-to-b from-emerald-900 to-emerald-800 text-white shadow-2xl">
         <div className="flex flex-col h-full">
-          <div className="p-8 border-b border-white/10">
+          <div className="p-6 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                <span className="text-2xl font-bold">₦</span>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight">Atox</h1>
-                <p className="text-sm text-white/60 font-medium">Earnings Platform</p>
-              </div>
+              <Image
+                src="/logo.jpg"
+                alt="ATOX Logo"
+                width={120}
+                height={40}
+                className="object-contain rounded-lg bg-white/10 p-1"
+                priority
+              />
             </div>
           </div>
 
