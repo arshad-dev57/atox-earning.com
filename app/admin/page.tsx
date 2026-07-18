@@ -14,6 +14,7 @@ import {
   addDoc,
   serverTimestamp,
   getDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import {
   CheckCircleIcon,
@@ -25,6 +26,9 @@ import {
   ArrowRightOnRectangleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ChatBubbleLeftRightIcon,
+  MagnifyingGlassIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 
 const PAGE_SIZE = 10;
@@ -174,6 +178,10 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [pages, setPages] = useState<Record<string, number>>({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const [messageText, setMessageText] = useState("");
+  const [sendingMessage, setSendingMessage] = useState(false);
   const router = useRouter();
 
   const getPage = (key: string) => pages[key] || 1;
@@ -188,6 +196,12 @@ export default function AdminPage() {
   const paymentsHistoryPage = paginate(paymentHistory, getPage("paymentsHistory"));
   const purchasesPage = paginate(purchases, getPage("purchases"));
   const usersPage = paginate(users, getPage("users"));
+  const filteredUsers = users.filter(user => 
+    user.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.phone?.includes(searchQuery)
+  );
+  const messagesPage = paginate(filteredUsers, getPage("messages"));
 
   // Strict authentication check checking for the admin flag
   useEffect(() => {
@@ -454,6 +468,64 @@ export default function AdminPage() {
     }
   };
 
+  const handleSendMessage = async () => {
+    if (!selectedUser || !messageText.trim()) {
+      toast.error("Please select a user and enter a message");
+      return;
+    }
+    setSendingMessage(true);
+    try {
+      await addDoc(collection(db, "notifications"), {
+        userId: selectedUser.id,
+        title: "New Message from Admin",
+        message: messageText,
+        type: "message",
+        createdAt: serverTimestamp(),
+      });
+      toast.success("Message sent successfully!");
+      setMessageText("");
+      setSelectedUser(null);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast.error("Failed to send message");
+    } finally {
+      setSendingMessage(false);
+    }
+  };
+
+  const handleCancelPlan = async (purchaseId: string, userId: string, planName: string) => {
+    if (!confirm(`Are you sure you want to cancel ${planName} for this user? This action cannot be undone.`)) {
+      return;
+    }
+    setActionLoading(purchaseId);
+    try {
+      // Delete the purchase document
+      await deleteDoc(doc(db, "purchases", purchaseId));
+      
+      // Send notification to user
+      await addDoc(collection(db, "notifications"), {
+        userId: userId,
+        title: "Plan Cancelled",
+        message: `Your plan "${planName}" has been cancelled by the admin.`,
+        type: "error",
+        createdAt: serverTimestamp(),
+      });
+      
+      toast.success("Plan cancelled successfully!");
+      
+      // Refresh purchases list
+      const q = query(collection(db, "purchases"), where("status", "==", "approved"));
+      const snapshot = await getDocs(q);
+      const purchaseData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setPurchases(purchaseData);
+    } catch (error) {
+      console.error("Error cancelling plan:", error);
+      toast.error("Failed to cancel plan");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Sidebar */}
@@ -495,6 +567,13 @@ export default function AdminPage() {
             <UsersIcon className="w-5 h-5" />
             Users ({users.length})
           </button>
+          <button
+            onClick={() => setActiveTab("messages")}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${activeTab === "messages" ? "bg-slate-800 text-emerald-400" : "hover:bg-slate-800/50"}`}
+          >
+            <ChatBubbleLeftRightIcon className="w-5 h-5" />
+            Messages
+          </button>
         </nav>
         
         <div className="mt-8 border-t border-slate-800 pt-8">
@@ -514,11 +593,13 @@ export default function AdminPage() {
           <h2 className="text-3xl font-bold text-gray-900 capitalize">
             {activeTab === "users"
               ? "Users"
-              : activeTab === "payments"
-                ? "Pending Purchases"
-                : activeTab === "purchaseHistory"
-                  ? "Completed Purchases"
-                  : `Pending ${activeTab}`}
+              : activeTab === "messages"
+                ? "Send Messages"
+                : activeTab === "payments"
+                  ? "Pending Purchases"
+                  : activeTab === "purchaseHistory"
+                    ? "Completed Purchases"
+                    : `Pending ${activeTab}`}
           </h2>
           <button
             onClick={fetchData}
@@ -823,6 +904,23 @@ export default function AdminPage() {
                   <p className="text-xs text-gray-400 mt-1">{formatDate(item, "purchasedAt")}</p>
                   {renderUserDetails(item.userId)}
                 </div>
+                <button
+                  onClick={() => handleCancelPlan(item.id, item.userId, item.name)}
+                  disabled={actionLoading === item.id}
+                  className="px-4 py-2 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {actionLoading === item.id ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Cancelling...
+                    </>
+                  ) : (
+                    <>
+                      <XCircleIcon className="w-5 h-5" />
+                      Cancel Plan
+                    </>
+                  )}
+                </button>
               </div>
             ))}
 
@@ -835,6 +933,147 @@ export default function AdminPage() {
                 rangeEnd={purchasesPage.rangeEnd}
                 onPageChange={(p) => setPage("purchases", p)}
               />
+            )}
+
+            {activeTab === "messages" && (
+              <div className="space-y-4">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="flex-1 relative">
+                      <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Search users by name, email, or phone..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => setSearchQuery("")}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                          <XMarkIcon className="w-5 h-5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {filteredUsers.length === 0 ? (
+                    <p className="text-gray-500 text-center py-8">No users found matching your search.</p>
+                  ) : (
+                    <>
+                      <div className="space-y-3">
+                        {messagesPage.items.map((user) => (
+                          <div
+                            key={user.id}
+                            onClick={() => setSelectedUser(user)}
+                            className={`p-4 rounded-xl border cursor-pointer transition ${
+                              "bg-gray-50 border-gray-200 hover:bg-gray-100"
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-bold">
+                                {user.fullName?.charAt(0) || "U"}
+                              </div>
+                              <div className="flex-1">
+                                <p className="font-semibold text-gray-900">{user.fullName}</p>
+                                <p className="text-sm text-gray-500">{user.email}</p>
+                              </div>
+                              <ChatBubbleLeftRightIcon className="w-5 h-5 text-gray-400" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {filteredUsers.length > PAGE_SIZE && (
+                        <Pagination
+                          currentPage={messagesPage.currentPage}
+                          totalPages={messagesPage.totalPages}
+                          totalItems={messagesPage.totalItems}
+                          rangeStart={messagesPage.rangeStart}
+                          rangeEnd={messagesPage.rangeEnd}
+                          onPageChange={(p) => setPage("messages", p)}
+                        />
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Message Modal */}
+            {selectedUser && (
+              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
+                <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl transform transition-all scale-100 animate-in slide-in-from-bottom-4 duration-300">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-xl font-bold text-gray-900">Send Message</h3>
+                    <button
+                      onClick={() => {
+                        setSelectedUser(null);
+                        setMessageText("");
+                      }}
+                      className="p-2 hover:bg-gray-100 rounded-full transition"
+                    >
+                      <XMarkIcon className="w-5 h-5 text-gray-500" />
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="bg-gray-50 p-4 rounded-xl">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-bold">
+                          {selectedUser.fullName?.charAt(0) || "U"}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900">{selectedUser.fullName}</p>
+                          <p className="text-sm text-gray-500">{selectedUser.email}</p>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Phone:</span> {selectedUser.phone || "N/A"}
+                      </p>
+                    </div>
+                    
+                    <textarea
+                      value={messageText}
+                      onChange={(e) => setMessageText(e.target.value)}
+                      placeholder="Type your message here..."
+                      rows={4}
+                      className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none text-gray-900"
+                    />
+                    
+                    <div className="flex gap-3">
+                      <button
+                        onClick={handleSendMessage}
+                        disabled={sendingMessage || !messageText.trim()}
+                        className="flex-1 px-4 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      >
+                        {sendingMessage ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <ChatBubbleLeftRightIcon className="w-5 h-5" />
+                            Send Message
+                          </>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedUser(null);
+                          setMessageText("");
+                        }}
+                        className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         )}

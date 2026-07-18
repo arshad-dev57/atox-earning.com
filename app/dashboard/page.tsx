@@ -38,6 +38,7 @@ import {
   BellIcon,
   ListBulletIcon,
   ChatBubbleLeftRightIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 
 // Helper to format currency
@@ -362,122 +363,124 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
-      <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl transform transition-all scale-100 animate-in slide-in-from-bottom-4 duration-300">
-        <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-yellow-500/30">
-            <ArrowUpIcon className="w-8 h-8 text-white" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mt-3">Withdraw Funds</h2>
-          <p className="text-sm text-gray-500">Withdraw your earnings</p>
-        </div>
-
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
-          <div className="flex items-start gap-3">
-            <ClockIcon className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-sm font-semibold text-yellow-800">Withdrawal Schedule</p>
-              <p className="text-xs text-yellow-700">Every Friday (8 AM - 8 PM) • Minimum ₦5,000</p>
+      <div className="bg-white rounded-3xl max-w-md w-full max-h-[90vh] flex flex-col shadow-2xl transform transition-all scale-100 animate-in slide-in-from-bottom-4 duration-300">
+        <div className="p-6 overflow-y-auto flex-1">
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-yellow-500/30">
+              <ArrowUpIcon className="w-8 h-8 text-white" />
             </div>
+            <h2 className="text-2xl font-bold text-gray-900 mt-3">Withdraw Funds</h2>
+            <p className="text-sm text-gray-500">Withdraw your earnings</p>
           </div>
-        </div>
 
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-          <div className="flex items-start gap-3">
-            <span className="text-red-500 text-lg leading-none flex-shrink-0">⚠️</span>
-            <div>
-              <p className="text-sm font-semibold text-red-800">Withdrawal Fee</p>
-              <p className="text-xs text-red-700">A 10% charge will be applied to all withdrawals.</p>
-            </div>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-              Select Balance to Withdraw
-            </label>
-            <select
-              value={balanceType}
-              onChange={(e) => setBalanceType(e.target.value)}
-              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all mb-3"
-            >
-              <option value="referral">Referral Balance — {formatCurrency(referralBalance)} (Available anytime)</option>
-              <option value="task" disabled={!isTaskAllowed}>Task Balance — {formatCurrency(balance)}{!isTaskAllowed ? " 🔒 (Fridays 8AM–8PM only)" : ""}</option>
-            </select>
-
-            {/* Lock notice when task is not available */}
-            {!isTaskAllowed && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-3 flex items-start gap-2">
-                <span className="text-red-500 text-lg leading-none">🔒</span>
-                <div>
-                  <p className="text-sm font-semibold text-red-700">Task Balance Locked</p>
-                  <p className="text-xs text-red-600">Task withdrawals are only available every <strong>Friday from 8:00 AM to 8:00 PM</strong> (Nigerian Time). You can still withdraw your Referral Balance now.</p>
-                </div>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4">
+            <div className="flex items-start gap-3">
+              <ClockIcon className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-semibold text-yellow-800">Withdrawal Schedule</p>
+                <p className="text-xs text-yellow-700">Every Friday (8 AM - 8 PM) • Minimum ₦5,000</p>
               </div>
-            )}
-
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-              Amount (₦)
-            </label>
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Enter amount (min ₦5,000)"
-              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all"
-              required
-              min="5000"
-            />
-            <p className="text-xs text-gray-500 mt-1.5">
-              Available: {formatCurrency(balanceType === "task" ? balance : referralBalance)}
-            </p>
+            </div>
           </div>
 
-          <div className="space-y-3">
-            <p className="text-sm font-semibold text-gray-700">Bank Details</p>
-            <input
-              type="text"
-              value={bankDetails.bankName}
-              onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
-              placeholder="Bank Name"
-              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all"
-              required
-            />
-            <input
-              type="text"
-              value={bankDetails.accountNumber}
-              onChange={(e) => setBankDetails({ ...bankDetails, accountNumber: e.target.value })}
-              placeholder="Account Number"
-              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all"
-              required
-            />
-            <input
-              type="text"
-              value={bankDetails.accountName}
-              onChange={(e) => setBankDetails({ ...bankDetails, accountName: e.target.value })}
-              placeholder="Account Name"
-              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all"
-              required
-            />
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
+            <div className="flex items-start gap-3">
+              <span className="text-red-500 text-lg leading-none flex-shrink-0">⚠️</span>
+              <div>
+                <p className="text-sm font-semibold text-red-800">Withdrawal Fee</p>
+                <p className="text-xs text-red-700">A 10% charge will be applied to all withdrawals.</p>
+              </div>
+            </div>
           </div>
 
-          <div className="flex gap-3 mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl font-semibold text-gray-600 hover:bg-gray-50 transition"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 px-4 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-yellow-500/30 transition-all disabled:opacity-50"
-            >
-              {loading ? "Processing..." : "Withdraw"}
-            </button>
-          </div>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                Select Balance to Withdraw
+              </label>
+              <select
+                value={balanceType}
+                onChange={(e) => setBalanceType(e.target.value)}
+                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all mb-3"
+              >
+                <option value="referral">Referral Balance — {formatCurrency(referralBalance)} (Available anytime)</option>
+                <option value="task" disabled={!isTaskAllowed}>Task Balance — {formatCurrency(balance)}{!isTaskAllowed ? " 🔒 (Fridays 8AM–8PM only)" : ""}</option>
+              </select>
+
+              {/* Lock notice when task is not available */}
+              {!isTaskAllowed && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-3 flex items-start gap-2">
+                  <span className="text-red-500 text-lg leading-none">🔒</span>
+                  <div>
+                    <p className="text-sm font-semibold text-red-700">Task Balance Locked</p>
+                    <p className="text-xs text-red-600">Task withdrawals are only available every <strong>Friday from 8:00 AM to 8:00 PM</strong> (Nigerian Time). You can still withdraw your Referral Balance now.</p>
+                  </div>
+                </div>
+              )}
+
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                Amount (₦)
+              </label>
+              <input
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="Enter amount (min ₦5,000)"
+                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all"
+                required
+                min="5000"
+              />
+              <p className="text-xs text-gray-500 mt-1.5">
+                Available: {formatCurrency(balanceType === "task" ? balance : referralBalance)}
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-sm font-semibold text-gray-700">Bank Details</p>
+              <input
+                type="text"
+                value={bankDetails.bankName}
+                onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
+                placeholder="Bank Name"
+                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all"
+                required
+              />
+              <input
+                type="text"
+                value={bankDetails.accountNumber}
+                onChange={(e) => setBankDetails({ ...bankDetails, accountNumber: e.target.value })}
+                placeholder="Account Number"
+                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all"
+                required
+              />
+              <input
+                type="text"
+                value={bankDetails.accountName}
+                onChange={(e) => setBankDetails({ ...bankDetails, accountName: e.target.value })}
+                placeholder="Account Name"
+                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all"
+                required
+              />
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl font-semibold text-gray-600 hover:bg-gray-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-yellow-500/30 transition-all disabled:opacity-50"
+              >
+                {loading ? "Processing..." : "Withdraw"}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
@@ -494,6 +497,8 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
   const [loading, setLoading] = useState(true);
   const [showRecharge, setShowRecharge] = useState(false);
   const [showWithdraw, setShowWithdraw] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [showNotificationSnackbar, setShowNotificationSnackbar] = useState(false);
   const router = useRouter();
 
   const todayKey = new Date().toISOString().split("T")[0]; // e.g. "2024-06-28"
@@ -524,6 +529,18 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
         }
         setAdProgress(progressMap);
         setTodayEarned(todayTotal);
+
+        // Fetch unread notifications
+        const notifQ = query(collection(db, "notifications"), where("userId", "==", userId));
+        const notifSnapshot = await getDocs(notifQ);
+        const notifs = notifSnapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const unreadCount = notifs.filter((n: any) => !n.read).length;
+        setUnreadNotifications(unreadCount);
+        
+        // Show snackbar if there are unread notifications
+        if (unreadCount > 0) {
+          setShowNotificationSnackbar(true);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -778,6 +795,29 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
           </div>
         )}
       </div>
+
+      {/* Notification Snackbar */}
+      {showNotificationSnackbar && (
+        <div className="fixed bottom-20 lg:bottom-8 left-4 right-4 lg:left-auto lg:right-8 lg:w-96 bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4 rounded-2xl shadow-2xl z-50 animate-in slide-in-from-bottom-4 duration-300">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+              <BellIcon className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <p className="font-bold text-white">New Notifications</p>
+              <p className="text-sm text-white/90 mt-1">
+                You have {unreadNotifications} unread notification{unreadNotifications > 1 ? 's' : ''}. Check your notifications tab to stay updated!
+              </p>
+            </div>
+            <button
+              onClick={() => setShowNotificationSnackbar(false)}
+              className="p-1 hover:bg-white/20 rounded-full transition"
+            >
+              <XMarkIcon className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -1407,8 +1447,10 @@ const TeamTab = ({ userId }: { userId: string | null }) => {
   }, [userId]);
 
   const copyReferralCode = () => {
-    navigator.clipboard.writeText(referralCode);
-    alert("Referral code copied! Share it with friends so they can enter it when registering.");
+    const websiteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://atox-earning.com';
+    const textToCopy = `Join ATOX Earnings and earn money! Use my referral code: ${referralCode}\nRegister at: ${websiteUrl}/register`;
+    navigator.clipboard.writeText(textToCopy);
+    alert("Referral code and website link copied! Share it with friends.");
   };
 
   return (
@@ -1459,7 +1501,7 @@ const TeamTab = ({ userId }: { userId: string | null }) => {
       <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-200 mb-6">
         <div className="flex flex-col gap-3">
           <div>
-            <p className="font-semibold text-gray-900 text-lg">🎁 Your Referral Code</p>
+            <p className="font-semibold text-gray-900 text-lg">🎁 Your Referral Code & Link</p>
             <p className="text-sm text-gray-600 mt-1">Share this code with friends. When they register and enter your code, you earn <strong>10%</strong> of their first product purchase!</p>
           </div>
           <div className="flex gap-2 items-center">
@@ -1471,10 +1513,10 @@ const TeamTab = ({ userId }: { userId: string | null }) => {
               className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition flex items-center gap-2 whitespace-nowrap"
             >
               <ClipboardDocumentIcon className="w-5 h-5" />
-              Copy Code
+              Copy Code & Link
             </button>
           </div>
-          <p className="text-xs text-gray-500">💡 Ask your friend to enter this code in the <strong>"Invitation Code"</strong> field on the Register page.</p>
+          <p className="text-xs text-gray-500">💡 Clicking copy will copy both your referral code and the website registration link to share with friends.</p>
         </div>
       </div>
 
@@ -1579,11 +1621,17 @@ const NotificationsTab = ({ userId }: { userId: string | null }) => {
                 key={notif.id}
                 className="flex items-start gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100"
               >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${notif.type === "success" ? "bg-emerald-100 text-emerald-600" :
-                    notif.type === "error" ? "bg-red-100 text-red-600" :
-                      "bg-blue-100 text-blue-600"
-                  }`}>
-                  <BellIcon className="w-6 h-6" />
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                  notif.type === "success" ? "bg-emerald-100 text-emerald-600" :
+                  notif.type === "error" ? "bg-red-100 text-red-600" :
+                  notif.type === "message" ? "bg-purple-100 text-purple-600" :
+                  "bg-blue-100 text-blue-600"
+                }`}>
+                  {notif.type === "message" ? (
+                    <ChatBubbleLeftRightIcon className="w-6 h-6" />
+                  ) : (
+                    <BellIcon className="w-6 h-6" />
+                  )}
                 </div>
                 <div className="flex-1">
                   <h4 className="font-bold text-gray-900">{notif.title}</h4>
