@@ -15,6 +15,8 @@ import {
   serverTimestamp,
   getDoc,
   deleteDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import {
   CheckCircleIcon,
