@@ -105,8 +105,8 @@ const PRODUCTS = [
     ads: 20,
     price: 3000,
     term: "30 days",
-    dailyIncome: 750,
-    totalIncome: 22000,
+    dailyIncome: 350,
+    totalIncome: 10500,
   },
   {
     id: "vip2",
@@ -114,8 +114,8 @@ const PRODUCTS = [
     ads: 35,
     price: 5000,
     term: "30 days",
-    dailyIncome: 1200,
-    totalIncome: 36000,
+    dailyIncome: 750,
+    totalIncome: 22500,
   },
   {
     id: "vip3",
@@ -123,8 +123,35 @@ const PRODUCTS = [
     ads: 50,
     price: 10000,
     term: "30 days",
-    dailyIncome: 2200,
-    totalIncome: 66000,
+    dailyIncome: 1000,
+    totalIncome: 30000,
+  },
+  {
+    id: "vip4",
+    name: "VIP 4",
+    ads: 15,
+    price: 35000,
+    term: "30 days",
+    dailyIncome: 1400,
+    totalIncome: 42000,
+  },
+  {
+    id: "vip5",
+    name: "VIP 5",
+    ads: 15,
+    price: 70000,
+    term: "30 days",
+    dailyIncome: 2000,
+    totalIncome: 60000,
+  },
+  {
+    id: "vip6",
+    name: "VIP 6",
+    ads: 15,
+    price: 100000,
+    term: "30 days",
+    dailyIncome: 2500,
+    totalIncome: 75000,
   },
 ];
 
@@ -518,7 +545,7 @@ export default function AdminPage() {
       // Refresh purchases list
       const q = query(collection(db, "purchases"), where("status", "==", "approved"));
       const snapshot = await getDocs(q);
-      const purchaseData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const purchaseData = snapshot.docs.map((doc) => ({ id: doc.id,   }));
       setPurchases(purchaseData);
     } catch (error) {
       console.error("Error cancelling plan:", error);

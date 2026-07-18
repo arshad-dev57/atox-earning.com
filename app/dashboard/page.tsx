@@ -1104,12 +1104,12 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const products = [
-    { id: "vip1", name: "VIP 1", ads: 20, price: 3000, term: "30 days", dailyIncome: 750, totalIncome: 22500, color: "from-emerald-500 to-green-600", badge: "Starter" },
-    { id: "vip2", name: "VIP 2", ads: 15, price: 7000, term: "30 days", dailyIncome: 1700, totalIncome: 51000, color: "from-blue-500 to-indigo-600", badge: "Basic" },
-    { id: "vip3", name: "VIP 3", ads: 15, price: 15000, term: "30 days", dailyIncome: 3000, totalIncome: 90000, color: "from-purple-500 to-pink-600", badge: "Standard" },
-    { id: "vip4", name: "VIP 4", ads: 15, price: 35000, term: "30 days", dailyIncome: 9000, totalIncome: 270000, color: "from-orange-500 to-red-600", badge: "Advanced" },
-    { id: "vip5", name: "VIP 5", ads: 15, price: 70000, term: "30 days", dailyIncome: 18000, totalIncome: 540000, color: "from-rose-500 to-pink-700", badge: "Premium" },
-    { id: "vip6", name: "VIP 6", ads: 15, price: 100000, term: "30 days", dailyIncome: 30000, totalIncome: 900000, color: "from-yellow-500 to-amber-600", badge: "Elite" },
+    { id: "vip1", name: "VIP 1", ads: 20, price: 3000, term: "30 days", dailyIncome: 350, totalIncome: 10500, color: "from-emerald-500 to-green-600", badge: "Starter" },
+    { id: "vip2", name: "VIP 2", ads: 35, price: 5000, term: "30 days", dailyIncome: 750, totalIncome: 22500, color: "from-blue-500 to-indigo-600", badge: "Basic" },
+    { id: "vip3", name: "VIP 3", ads: 50, price: 10000, term: "30 days", dailyIncome: 1000, totalIncome: 30000, color: "from-purple-500 to-pink-600", badge: "Standard" },
+    { id: "vip4", name: "VIP 4", ads: 15, price: 35000, term: "30 days", dailyIncome: 1400, totalIncome: 42000, color: "from-orange-500 to-red-600", badge: "Advanced" },
+    { id: "vip5", name: "VIP 5", ads: 15, price: 70000, term: "30 days", dailyIncome: 2000, totalIncome: 60000, color: "from-rose-500 to-pink-700", badge: "Premium" },
+    { id: "vip6", name: "VIP 6", ads: 15, price: 100000, term: "30 days", dailyIncome: 2500, totalIncome: 75000, color: "from-yellow-500 to-amber-600", badge: "Elite" },
   ];
   // Bank details
   const bankDetails = {

@@ -34,9 +34,12 @@ const formatCurrency = (amount: number) =>
 
 // Product definitions — must match dashboard
 const PRODUCTS: Record<string, { id: string; name: string; ads: number; dailyIncome: number; totalIncome: number; color: string }> = {
-  vip1: { id: "vip1", name: "VIP 1", ads: 20, dailyIncome: 750, totalIncome: 22000, color: "from-emerald-500 to-green-600" },
-  vip2: { id: "vip2", name: "VIP 2", ads: 35, dailyIncome: 1200, totalIncome: 36000, color: "from-blue-500 to-indigo-600" },
-  vip3: { id: "vip3", name: "VIP 3", ads: 50, dailyIncome: 2200, totalIncome: 66000, color: "from-purple-500 to-pink-600" },
+  vip1: { id: "vip1", name: "VIP 1", ads: 20, dailyIncome: 350, totalIncome: 10500, color: "from-emerald-500 to-green-600" },
+  vip2: { id: "vip2", name: "VIP 2", ads: 35, dailyIncome: 750, totalIncome: 22500, color: "from-blue-500 to-indigo-600" },
+  vip3: { id: "vip3", name: "VIP 3", ads: 50, dailyIncome: 1000, totalIncome: 30000, color: "from-purple-500 to-pink-600" },
+  vip4: { id: "vip4", name: "VIP 4", ads: 15, dailyIncome: 1400, totalIncome: 42000, color: "from-orange-500 to-red-600" },
+  vip5: { id: "vip5", name: "VIP 5", ads: 15, dailyIncome: 2000, totalIncome: 60000, color: "from-rose-500 to-pink-700" },
+  vip6: { id: "vip6", name: "VIP 6", ads: 15, dailyIncome: 2500, totalIncome: 75000, color: "from-yellow-500 to-amber-600" },
 };
 
 export default function PlanDetailPage() {
