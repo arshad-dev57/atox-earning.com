@@ -38,6 +38,7 @@ import {
   BellIcon,
   ListBulletIcon,
   ChatBubbleLeftRightIcon,
+  DevicePhoneMobileIcon,
 } from "@heroicons/react/24/outline";
 
 // Helper to format currency
@@ -58,6 +59,7 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
     { id: "team", label: "Team", icon: UsersIcon },
     { id: "notifications", label: "Notifications", icon: BellIcon },
     { id: "support", label: "Customer Care", icon: ChatBubbleLeftRightIcon },
+    { id: "vtu", label: "Cashflow", icon: DevicePhoneMobileIcon },
     { id: "profile", label: "Profile", icon: UserIcon },
   ];
 
@@ -86,8 +88,8 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
                   className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group ${activeTab === item.id
-                      ? "bg-white/20 text-white shadow-lg shadow-black/20"
-                      : "text-white/70 hover:bg-white/10 hover:text-white"
+                    ? "bg-white/20 text-white shadow-lg shadow-black/20"
+                    : "text-white/70 hover:bg-white/10 hover:text-white"
                     }`}
                 >
                   <Icon className={`w-6 h-6 ${activeTab === item.id ? "text-white" : "text-white/50 group-hover:text-white/70"
@@ -126,8 +128,8 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
                 className={`flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all ${activeTab === item.id
-                    ? "text-emerald-600"
-                    : "text-gray-400 hover:text-gray-600"
+                  ? "text-emerald-600"
+                  : "text-gray-400 hover:text-gray-600"
                   }`}
               >
                 <Icon className="w-6 h-6" />
@@ -755,8 +757,8 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
                   <button
                     onClick={() => router.push(`/plan/${product.productId}`)}
                     className={`w-full py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${isDone
-                        ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/30 active:scale-95"
+                      ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/30 active:scale-95"
                       }`}
                   >
                     {isDone ? (
@@ -859,8 +861,8 @@ const TasksTab = ({ userId }: { userId: string | null }) => {
                     </div>
                     <span
                       className={`text-xs font-semibold px-3 py-1 rounded-full ${isDone
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-blue-100 text-blue-700"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-blue-100 text-blue-700"
                         }`}
                     >
                       {isDone ? "Completed Today" : "Active — Watching"}
@@ -881,8 +883,8 @@ const TasksTab = ({ userId }: { userId: string | null }) => {
                   <div className="w-full bg-gray-100 rounded-full h-4 overflow-hidden">
                     <div
                       className={`h-4 rounded-full transition-all duration-700 ${isDone
-                          ? "bg-gradient-to-r from-emerald-400 to-green-500"
-                          : "bg-gradient-to-r from-blue-500 to-indigo-600"
+                        ? "bg-gradient-to-r from-emerald-400 to-green-500"
+                        : "bg-gradient-to-r from-blue-500 to-indigo-600"
                         }`}
                       style={{ width: `${progressPct}%` }}
                     />
@@ -913,8 +915,8 @@ const TasksTab = ({ userId }: { userId: string | null }) => {
                 <button
                   onClick={() => router.push(`/plan/${product.productId}`)}
                   className={`w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 active:scale-95 ${isDone
-                      ? "bg-gray-100 text-gray-500 cursor-default"
-                      : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/30"
+                    ? "bg-gray-100 text-gray-500 cursor-default"
+                    : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/30"
                     }`}
                 >
                   {isDone ? (
@@ -1068,8 +1070,29 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
     { id: "vip2", name: "VIP 2", ads: 15, price: 7000, term: "30 days", dailyIncome: 1700, totalIncome: 51000, color: "from-blue-500 to-indigo-600", badge: "Basic" },
     { id: "vip3", name: "VIP 3", ads: 15, price: 15000, term: "30 days", dailyIncome: 3000, totalIncome: 90000, color: "from-purple-500 to-pink-600", badge: "Standard" },
     { id: "vip4", name: "VIP 4", ads: 15, price: 35000, term: "30 days", dailyIncome: 9000, totalIncome: 270000, color: "from-orange-500 to-red-600", badge: "Advanced" },
-    { id: "vip5", name: "VIP 5", ads: 15, price: 70000, term: "30 days", dailyIncome: 18000, totalIncome: 540000, color: "from-rose-500 to-pink-700", badge: "Premium" },
-    { id: "vip6", name: "VIP 6", ads: 15, price: 100000, term: "30 days", dailyIncome: 30000, totalIncome: 900000, color: "from-yellow-500 to-amber-600", badge: "Elite" },
+    { id: "vip5", name: "VIP 5", ads: 15, price: 75000, term: "30 days", dailyIncome: 15000, totalIncome: 150000, color: "from-rose-500 to-pink-700", badge: "Premium" },
+    { id: "vip6", name: "VIP 6", ads: 15, price: 100000, term: "30 days", dailyIncome: 25000, totalIncome: 300000, color: "from-yellow-500 to-amber-600", badge: "Elite" },
+    {
+      id: "vip7",
+      name: "VIP 7",
+      ads: 20,
+      price: 500000,
+      term: "30 days",
+      dailyIncome: 25000,
+      totalIncome: 750000,
+      color: "from-yellow-500 to-amber-600",
+      badge: "Elite",
+    }, {
+      id: "vip8",
+      name: "VIP 8",
+      ads: 20,
+      price: 1000000,
+      term: "30 days",
+      dailyIncome: 43333.33,
+      totalIncome: 1300000,
+      color: "from-yellow-500 to-amber-600",
+      badge: "Elite",
+    }
   ];
   // Bank details
   const bankDetails = {
@@ -1193,7 +1216,7 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${payment.status === "approved" ? "bg-emerald-100" :
-                      payment.status === "rejected" ? "bg-red-100" : "bg-yellow-100"
+                    payment.status === "rejected" ? "bg-red-100" : "bg-yellow-100"
                     }`}>
                     {payment.status === "approved" ? (
                       <CheckCircleIcon className="w-5 h-5 text-emerald-600" />
@@ -1209,8 +1232,8 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
                   </div>
                 </div>
                 <span className={`text-xs px-3 py-1 rounded-full font-medium ${payment.status === "approved" ? "bg-emerald-50 text-emerald-600" :
-                    payment.status === "rejected" ? "bg-red-50 text-red-600" :
-                      "bg-yellow-50 text-yellow-600"
+                  payment.status === "rejected" ? "bg-red-50 text-red-600" :
+                    "bg-yellow-50 text-yellow-600"
                   }`}>
                   {payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
                 </span>
@@ -1580,8 +1603,8 @@ const NotificationsTab = ({ userId }: { userId: string | null }) => {
                 className="flex items-start gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100"
               >
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${notif.type === "success" ? "bg-emerald-100 text-emerald-600" :
-                    notif.type === "error" ? "bg-red-100 text-red-600" :
-                      "bg-blue-100 text-blue-600"
+                  notif.type === "error" ? "bg-red-100 text-red-600" :
+                    "bg-blue-100 text-blue-600"
                   }`}>
                   <BellIcon className="w-6 h-6" />
                 </div>
@@ -1734,6 +1757,225 @@ const ProfileTab = ({ userData, userId }: { userData: { email?: string; balance?
   );
 };
 
+// --- VTU & Bills Tab ---
+const VTUTab = ({ userId }: { userId: string | null }) => {
+  const [purchaseType, setPurchaseType] = useState<"airtime" | "data">("airtime");
+  const [provider, setProvider] = useState<number>(1);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [amount, setAmount] = useState("");
+  const [bundleId, setBundleId] = useState<number>(1);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<{ type: "success" | "error", text: string } | null>(null);
+
+  const providers = [
+    { id: 1, name: "MTN" },
+    { id: 2, name: "Glo" },
+    { id: 3, name: "Airtel" },
+    { id: 4, name: "9mobile" },
+  ];
+
+  const dataPlans = [
+    // MTN
+    { id: 43, providerId: 1, name: "MTN 110MB - 1 Day", price: 100 },
+    { id: 74, providerId: 1, name: "MTN 230MB - 1 Day", price: 250 },
+    { id: 76, providerId: 1, name: "MTN 500MB - 2 Days", price: 270 },
+    { id: 78, providerId: 1, name: "MTN 1GB - 1 Day", price: 300 },
+    { id: 44, providerId: 1, name: "MTN 500MB - 30 Days", price: 400 },
+    { id: 77, providerId: 1, name: "MTN 1GB - 2 Days", price: 450 },
+    { id: 45, providerId: 1, name: "MTN 1GB - 7 Days", price: 499 },
+    { id: 46, providerId: 1, name: "MTN 1GB - 30 Days", price: 600 },
+    { id: 79, providerId: 1, name: "MTN 2.5GB - 1 Day", price: 650 },
+    { id: 47, providerId: 1, name: "MTN 2GB - 7 Days", price: 950 },
+    { id: 27, providerId: 1, name: "MTN 2.5GB - 2 Days", price: 1000 },
+    { id: 71, providerId: 1, name: "MTN 2GB - 7 Days", price: 1000 },
+    { id: 60, providerId: 1, name: "MTN 3.5GB - 1 Day", price: 1000 },
+    { id: 48, providerId: 1, name: "MTN 2GB - 30 Days", price: 1250 },
+    { id: 61, providerId: 1, name: "MTN 4GB - 2 Days", price: 1300 },
+    { id: 80, providerId: 1, name: "MTN 5GB - 14 Days", price: 1500 },
+    { id: 49, providerId: 1, name: "MTN 3GB - 30 Days", price: 1500 },
+    { id: 50, providerId: 1, name: "MTN 5GB - 30 Days", price: 2300 },
+    { id: 53, providerId: 1, name: "MTN 6GB - 7 Days", price: 2600 },
+    { id: 55, providerId: 1, name: "MTN 11GB - 7 Days", price: 3450 },
+    { id: 33, providerId: 1, name: "MTN 7GB - 30 Days", price: 3599 },
+    { id: 67, providerId: 1, name: "MTN 10GB - 30 Days", price: 5000 },
+    { id: 57, providerId: 1, name: "MTN 36GB - 30 Days", price: 11000 },
+    { id: 51, providerId: 1, name: "MTN 75GB - 30 Days", price: 18500 },
+
+    // Glo
+    { id: 42, providerId: 2, name: "Glo 200 MB - 1 Day", price: 100 },
+    { id: 35, providerId: 2, name: "Glo 500MB - 30 Days", price: 250 },
+    { id: 68, providerId: 2, name: "Glo 1GB - 3 Days", price: 350 },
+    { id: 36, providerId: 2, name: "Glo 1GB - 30 Days", price: 450 },
+    { id: 41, providerId: 2, name: "Glo 1GB - 14 Days", price: 500 },
+    { id: 40, providerId: 2, name: "Glo 2GB - 30 Days", price: 900 },
+    { id: 37, providerId: 2, name: "Glo 3GB - 30 Days", price: 1500 },
+    { id: 54, providerId: 2, name: "Glo 5GB - 7 Days", price: 1800 },
+    { id: 38, providerId: 2, name: "Glo 5GB - 30 Days", price: 2400 },
+    { id: 39, providerId: 2, name: "Glo 10GB - 30 Days", price: 4500 },
+    { id: 59, providerId: 2, name: "Glo 20.5GB - 30 Days", price: 6000 },
+    { id: 58, providerId: 2, name: "Glo 107GB - 30 Days", price: 20000 },
+
+    // Airtel
+    { id: 70, providerId: 3, name: "Airtel 1GB (Social Bundle) - 3 Days", price: 350 },
+    { id: 13, providerId: 3, name: "Airtel 500MB - 7 days", price: 500 },
+    { id: 69, providerId: 3, name: "Airtel 1.5GB - 1 Day", price: 530 },
+    { id: 66, providerId: 3, name: "Airtel 1.5GB - 2 Days", price: 650 },
+    { id: 15, providerId: 3, name: "Airtel 1GB - 7 Days", price: 800 },
+    { id: 17, providerId: 3, name: "Airtel 2GB - 30 Days", price: 1500 },
+    { id: 52, providerId: 3, name: "Airtel 5GB - 7 Days", price: 1599 },
+    { id: 18, providerId: 3, name: "Airtel 3GB - 30 Days", price: 2100 },
+    { id: 22, providerId: 3, name: "Airtel 6GB - 7 Days", price: 2599 },
+    { id: 19, providerId: 3, name: "Airtel 4GB - 30 Days", price: 2650 },
+    { id: 20, providerId: 3, name: "Airtel 8GB - 30 Days", price: 3200 },
+    { id: 21, providerId: 3, name: "Airtel 10GB - 30 Days", price: 4200 },
+  ];
+
+  const availableDataPlans = dataPlans.filter(p => p.providerId === provider);
+
+  const handlePurchase = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userId) return;
+    setLoading(true);
+    setMessage(null);
+
+    try {
+      const endpoint = purchaseType === "airtime" ? "/api/vtu/airtime" : "/api/vtu/data";
+      const payload = purchaseType === "airtime"
+        ? { userId, provider_id: provider, phone_number: phoneNumber, amount: Number(amount) }
+        : { userId, bundle_id: bundleId, phone_number: phoneNumber, provider_id: provider, amount: availableDataPlans.find(p => p.id === bundleId)?.price || 0 };
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setMessage({ type: "success", text: data.message || "Purchase successful!" });
+        setPhoneNumber("");
+        setAmount("");
+      } else {
+        setMessage({ type: "error", text: data.error || "Purchase failed." });
+      }
+    } catch (err: any) {
+      setMessage({ type: "error", text: err.message || "Something went wrong." });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="p-6 pb-24 lg:pb-6 bg-gradient-to-br from-gray-50 via-white to-emerald-50/30 min-h-screen">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900">Data & Airtime</h1>
+        <p className="text-gray-500 mt-1">Purchase airtime and data bundles instantly</p>
+      </div>
+
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 max-w-2xl">
+        {/* Toggle Airtime / Data */}
+        <div className="flex bg-gray-100 p-1 rounded-xl mb-6">
+          <button
+            onClick={() => setPurchaseType("airtime")}
+            className={`flex-1 py-2 rounded-lg font-medium transition ${purchaseType === "airtime" ? "bg-white text-emerald-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+          >
+            Airtime
+          </button>
+          <button
+            onClick={() => setPurchaseType("data")}
+            className={`flex-1 py-2 rounded-lg font-medium transition ${purchaseType === "data" ? "bg-white text-emerald-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+          >
+            Data
+          </button>
+        </div>
+
+        {message && (
+          <div className={`p-4 rounded-xl mb-6 ${message.type === "success" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
+            {message.text}
+          </div>
+        )}
+
+        <form onSubmit={handlePurchase} className="space-y-5">
+          {/* Network Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Select Network</label>
+            <div className="grid grid-cols-4 gap-3">
+              {providers.map((p) => (
+                <button
+                  type="button"
+                  key={p.id}
+                  onClick={() => { setProvider(p.id); setBundleId(dataPlans.find(plan => plan.providerId === p.id)?.id || 1); }}
+                  className={`py-3 rounded-xl border text-sm font-bold transition ${provider === p.id ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-gray-200 text-gray-600 hover:bg-gray-50"}`}
+                >
+                  {p.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Phone Number */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+            <input
+              type="tel"
+              required
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder="e.g. 08012345678"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+            />
+          </div>
+
+          {/* Dynamic Field: Amount or Data Plan */}
+          {purchaseType === "airtime" ? (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Amount (NGN)</label>
+              <input
+                type="number"
+                required
+                min="50"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="Enter amount"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+              />
+            </div>
+          ) : (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Select Data Plan</label>
+              <select
+                required
+                value={bundleId}
+                onChange={(e) => setBundleId(Number(e.target.value))}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors bg-white"
+              >
+                {availableDataPlans.length > 0 ? (
+                  availableDataPlans.map(plan => (
+                    <option key={plan.id} value={plan.id}>{plan.name} - ₦{plan.price}</option>
+                  ))
+                ) : (
+                  <option value="" disabled>No plans available for this network</option>
+                )}
+              </select>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3.5 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition disabled:opacity-50 flex items-center justify-center gap-2 mt-4"
+          >
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-emerald-600 border-t-white rounded-full animate-spin" />
+            ) : (
+              "Purchase Now"
+            )}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
 // --- Main Dashboard Component ---
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("home");
@@ -1800,6 +2042,7 @@ export default function Dashboard() {
         {activeTab === "profile" && (
           <ProfileTab userData={userData} userId={userId} />
         )}
+        {activeTab === "vtu" && <VTUTab userId={userId} />}
       </div>
     </div>
   );
