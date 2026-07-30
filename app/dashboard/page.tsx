@@ -150,7 +150,7 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
                 <button
                   onClick={async () => {
                     await signOut(auth);
-                    window.location.href = "/login";
+                    window.location.href = "/";
                   }}
                   className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-white/70 hover:bg-red-500/20 hover:text-red-400 transition-all duration-200 group"
                 >
@@ -205,7 +205,7 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
             <button
               onClick={async () => {
                 await signOut(auth);
-                window.location.href = "/login";
+                window.location.href = "/";
               }}
               className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-white/70 hover:bg-red-500/20 hover:text-red-400 transition-all duration-200 group"
             >
@@ -1842,7 +1842,7 @@ const ProfileTab = ({ userData, userId }: { userData: { email?: string; balance?
           <button
             onClick={async () => {
               await signOut(auth);
-              window.location.href = "/login";
+              window.location.href = "/";
             }}
             className="flex items-center justify-between w-full p-3 rounded-xl hover:bg-red-50 transition group"
           >
@@ -1872,60 +1872,89 @@ const VTUTab = ({ userId }: { userId: string | null }) => {
     { id: 4, name: "9mobile" },
   ];
 
+  // Custom pricing mapping - display price vs actual API price
+  const customPriceMapping: Record<number, { displayPrice: number; apiPrice: number }> = {
+    // MTN Custom Pricing
+    43: { displayPrice: 100, apiPrice: 100 },    // 110MB Gifting
+    74: { displayPrice: 300, apiPrice: 250 },    // 230MB Gifting
+    44: { displayPrice: 400, apiPrice: 400 },    // 500MB SME
+    78: { displayPrice: 400, apiPrice: 300 },    // 1GB SME
+    76: { displayPrice: 500, apiPrice: 270 },    // 500MB SME
+    77: { displayPrice: 500, apiPrice: 450 },    // 1GB SME
+    45: { displayPrice: 650, apiPrice: 499 },    // 1GB SME
+    46: { displayPrice: 770, apiPrice: 600 },    // 1GB SME
+    79: { displayPrice: 700, apiPrice: 650 },    // 2.5GB SME
+    27: { displayPrice: 1200, apiPrice: 1000 },  // 2.5GB Gifting
+    47: { displayPrice: 1200, apiPrice: 950 },   // 2GB Gifting
+    71: { displayPrice: 1200, apiPrice: 1000 },  // 2GB SME
+    60: { displayPrice: 1200, apiPrice: 1000 },  // 3.5GB Gifting
+    48: { displayPrice: 1250, apiPrice: 1250 },  // 2GB SME
+    61: { displayPrice: 1275, apiPrice: 1300 },  // 4GB Gifting
+    80: { displayPrice: 1399, apiPrice: 1500 },  // 5GB corporate gifting
+    49: { displayPrice: 1570, apiPrice: 1500 },  // 3GB SME
+    50: { displayPrice: 2150, apiPrice: 2300 },  // 5GB SME
+    53: { displayPrice: 2595, apiPrice: 2600 },  // 6GB Gifting
+    55: { displayPrice: 3530, apiPrice: 3450 },  // 11GB Gifting
+    33: { displayPrice: 3599, apiPrice: 3599 },  // 7GB Gifting
+    67: { displayPrice: 4570, apiPrice: 5000 },  // 10GB Gifting
+    57: { displayPrice: 11800, apiPrice: 11000 }, // 36GB Gifting
+    51: { displayPrice: 18990, apiPrice: 18500 }, // 75GB SME
+  };
+
   const dataPlans = [
     // MTN
-    { id: 43, providerId: 1, name: "MTN 110MB - 1 Day", price: 100 },
-    { id: 74, providerId: 1, name: "MTN 230MB - 1 Day", price: 250 },
-    { id: 76, providerId: 1, name: "MTN 500MB - 2 Days", price: 270 },
-    { id: 78, providerId: 1, name: "MTN 1GB - 1 Day", price: 300 },
-    { id: 44, providerId: 1, name: "MTN 500MB - 30 Days", price: 400 },
-    { id: 77, providerId: 1, name: "MTN 1GB - 2 Days", price: 450 },
-    { id: 45, providerId: 1, name: "MTN 1GB - 7 Days", price: 499 },
-    { id: 46, providerId: 1, name: "MTN 1GB - 30 Days", price: 600 },
-    { id: 79, providerId: 1, name: "MTN 2.5GB - 1 Day", price: 650 },
-    { id: 47, providerId: 1, name: "MTN 2GB - 7 Days", price: 950 },
-    { id: 27, providerId: 1, name: "MTN 2.5GB - 2 Days", price: 1000 },
-    { id: 71, providerId: 1, name: "MTN 2GB - 7 Days", price: 1000 },
-    { id: 60, providerId: 1, name: "MTN 3.5GB - 1 Day", price: 1000 },
-    { id: 48, providerId: 1, name: "MTN 2GB - 30 Days", price: 1250 },
-    { id: 61, providerId: 1, name: "MTN 4GB - 2 Days", price: 1300 },
-    { id: 80, providerId: 1, name: "MTN 5GB - 14 Days", price: 1500 },
-    { id: 49, providerId: 1, name: "MTN 3GB - 30 Days", price: 1500 },
-    { id: 50, providerId: 1, name: "MTN 5GB - 30 Days", price: 2300 },
-    { id: 53, providerId: 1, name: "MTN 6GB - 7 Days", price: 2600 },
-    { id: 55, providerId: 1, name: "MTN 11GB - 7 Days", price: 3450 },
-    { id: 33, providerId: 1, name: "MTN 7GB - 30 Days", price: 3599 },
-    { id: 67, providerId: 1, name: "MTN 10GB - 30 Days", price: 5000 },
-    { id: 57, providerId: 1, name: "MTN 36GB - 30 Days", price: 11000 },
-    { id: 51, providerId: 1, name: "MTN 75GB - 30 Days", price: 18500 },
+    { id: 43, providerId: 1, name: "110MB Gifting", price: customPriceMapping[43]?.displayPrice || 100, apiPrice: customPriceMapping[43]?.apiPrice || 100 },
+    { id: 74, providerId: 1, name: "230MB Gifting", price: customPriceMapping[74]?.displayPrice || 300, apiPrice: customPriceMapping[74]?.apiPrice || 250 },
+    { id: 76, providerId: 1, name: "500MB SME", price: customPriceMapping[76]?.displayPrice || 500, apiPrice: customPriceMapping[76]?.apiPrice || 270 },
+    { id: 78, providerId: 1, name: "1GB SME", price: customPriceMapping[78]?.displayPrice || 400, apiPrice: customPriceMapping[78]?.apiPrice || 300 },
+    { id: 44, providerId: 1, name: "500MB SME", price: customPriceMapping[44]?.displayPrice || 400, apiPrice: customPriceMapping[44]?.apiPrice || 400 },
+    { id: 77, providerId: 1, name: "1GB SME", price: customPriceMapping[77]?.displayPrice || 500, apiPrice: customPriceMapping[77]?.apiPrice || 450 },
+    { id: 45, providerId: 1, name: "1GB SME", price: customPriceMapping[45]?.displayPrice || 650, apiPrice: customPriceMapping[45]?.apiPrice || 499 },
+    { id: 46, providerId: 1, name: "1GB SME", price: customPriceMapping[46]?.displayPrice || 770, apiPrice: customPriceMapping[46]?.apiPrice || 600 },
+    { id: 79, providerId: 1, name: "2.5GB SME", price: customPriceMapping[79]?.displayPrice || 700, apiPrice: customPriceMapping[79]?.apiPrice || 650 },
+    { id: 47, providerId: 1, name: "2GB Gifting", price: customPriceMapping[47]?.displayPrice || 1200, apiPrice: customPriceMapping[47]?.apiPrice || 950 },
+    { id: 27, providerId: 1, name: "2.5GB Gifting", price: customPriceMapping[27]?.displayPrice || 1200, apiPrice: customPriceMapping[27]?.apiPrice || 1000 },
+    { id: 71, providerId: 1, name: "2GB SME", price: customPriceMapping[71]?.displayPrice || 1200, apiPrice: customPriceMapping[71]?.apiPrice || 1000 },
+    { id: 60, providerId: 1, name: "3.5GB Gifting", price: customPriceMapping[60]?.displayPrice || 1200, apiPrice: customPriceMapping[60]?.apiPrice || 1000 },
+    { id: 48, providerId: 1, name: "2GB SME", price: customPriceMapping[48]?.displayPrice || 1250, apiPrice: customPriceMapping[48]?.apiPrice || 1250 },
+    { id: 61, providerId: 1, name: "4GB Gifting", price: customPriceMapping[61]?.displayPrice || 1275, apiPrice: customPriceMapping[61]?.apiPrice || 1300 },
+    { id: 80, providerId: 1, name: "5GB corporate gifting", price: customPriceMapping[80]?.displayPrice || 1399, apiPrice: customPriceMapping[80]?.apiPrice || 1500 },
+    { id: 49, providerId: 1, name: "3GB SME", price: customPriceMapping[49]?.displayPrice || 1570, apiPrice: customPriceMapping[49]?.apiPrice || 1500 },
+    { id: 50, providerId: 1, name: "5GB SME", price: customPriceMapping[50]?.displayPrice || 2150, apiPrice: customPriceMapping[50]?.apiPrice || 2300 },
+    { id: 53, providerId: 1, name: "6GB Gifting", price: customPriceMapping[53]?.displayPrice || 2595, apiPrice: customPriceMapping[53]?.apiPrice || 2600 },
+    { id: 55, providerId: 1, name: "11GB Gifting", price: customPriceMapping[55]?.displayPrice || 3530, apiPrice: customPriceMapping[55]?.apiPrice || 3450 },
+    { id: 33, providerId: 1, name: "7GB Gifting", price: customPriceMapping[33]?.displayPrice || 3599, apiPrice: customPriceMapping[33]?.apiPrice || 3599 },
+    { id: 67, providerId: 1, name: "10GB Gifting", price: customPriceMapping[67]?.displayPrice || 4570, apiPrice: customPriceMapping[67]?.apiPrice || 5000 },
+    { id: 57, providerId: 1, name: "36GB Gifting", price: customPriceMapping[57]?.displayPrice || 11800, apiPrice: customPriceMapping[57]?.apiPrice || 11000 },
+    { id: 51, providerId: 1, name: "75GB SME", price: customPriceMapping[51]?.displayPrice || 18990, apiPrice: customPriceMapping[51]?.apiPrice || 18500 },
 
-    // Glo
-    { id: 42, providerId: 2, name: "Glo 200 MB - 1 Day", price: 100 },
-    { id: 35, providerId: 2, name: "Glo 500MB - 30 Days", price: 250 },
-    { id: 68, providerId: 2, name: "Glo 1GB - 3 Days", price: 350 },
-    { id: 36, providerId: 2, name: "Glo 1GB - 30 Days", price: 450 },
-    { id: 41, providerId: 2, name: "Glo 1GB - 14 Days", price: 500 },
-    { id: 40, providerId: 2, name: "Glo 2GB - 30 Days", price: 900 },
-    { id: 37, providerId: 2, name: "Glo 3GB - 30 Days", price: 1500 },
-    { id: 54, providerId: 2, name: "Glo 5GB - 7 Days", price: 1800 },
-    { id: 38, providerId: 2, name: "Glo 5GB - 30 Days", price: 2400 },
-    { id: 39, providerId: 2, name: "Glo 10GB - 30 Days", price: 4500 },
-    { id: 59, providerId: 2, name: "Glo 20.5GB - 30 Days", price: 6000 },
-    { id: 58, providerId: 2, name: "Glo 107GB - 30 Days", price: 20000 },
+    // Glo - Using original prices (no custom mapping yet)
+    { id: 42, providerId: 2, name: "Glo 200 MB - 1 Day", price: 100, apiPrice: 100 },
+    { id: 35, providerId: 2, name: "Glo 500MB - 30 Days", price: 250, apiPrice: 250 },
+    { id: 68, providerId: 2, name: "Glo 1GB - 3 Days", price: 350, apiPrice: 350 },
+    { id: 36, providerId: 2, name: "Glo 1GB - 30 Days", price: 450, apiPrice: 450 },
+    { id: 41, providerId: 2, name: "Glo 1GB - 14 Days", price: 500, apiPrice: 500 },
+    { id: 40, providerId: 2, name: "Glo 2GB - 30 Days", price: 900, apiPrice: 900 },
+    { id: 37, providerId: 2, name: "Glo 3GB - 30 Days", price: 1500, apiPrice: 1500 },
+    { id: 54, providerId: 2, name: "Glo 5GB - 7 Days", price: 1800, apiPrice: 1800 },
+    { id: 38, providerId: 2, name: "Glo 5GB - 30 Days", price: 2400, apiPrice: 2400 },
+    { id: 39, providerId: 2, name: "Glo 10GB - 30 Days", price: 4500, apiPrice: 4500 },
+    { id: 59, providerId: 2, name: "Glo 20.5GB - 30 Days", price: 6000, apiPrice: 6000 },
+    { id: 58, providerId: 2, name: "Glo 107GB - 30 Days", price: 20000, apiPrice: 20000 },
 
-    // Airtel
-    { id: 70, providerId: 3, name: "Airtel 1GB (Social Bundle) - 3 Days", price: 350 },
-    { id: 13, providerId: 3, name: "Airtel 500MB - 7 days", price: 500 },
-    { id: 69, providerId: 3, name: "Airtel 1.5GB - 1 Day", price: 530 },
-    { id: 66, providerId: 3, name: "Airtel 1.5GB - 2 Days", price: 650 },
-    { id: 15, providerId: 3, name: "Airtel 1GB - 7 Days", price: 800 },
-    { id: 17, providerId: 3, name: "Airtel 2GB - 30 Days", price: 1500 },
-    { id: 52, providerId: 3, name: "Airtel 5GB - 7 Days", price: 1599 },
-    { id: 18, providerId: 3, name: "Airtel 3GB - 30 Days", price: 2100 },
-    { id: 22, providerId: 3, name: "Airtel 6GB - 7 Days", price: 2599 },
-    { id: 19, providerId: 3, name: "Airtel 4GB - 30 Days", price: 2650 },
-    { id: 20, providerId: 3, name: "Airtel 8GB - 30 Days", price: 3200 },
-    { id: 21, providerId: 3, name: "Airtel 10GB - 30 Days", price: 4200 },
+    // Airtel - Using original prices (no custom mapping yet)
+    { id: 70, providerId: 3, name: "Airtel 1GB (Social Bundle) - 3 Days", price: 350, apiPrice: 350 },
+    { id: 13, providerId: 3, name: "Airtel 500MB - 7 days", price: 500, apiPrice: 500 },
+    { id: 69, providerId: 3, name: "Airtel 1.5GB - 1 Day", price: 530, apiPrice: 530 },
+    { id: 66, providerId: 3, name: "Airtel 1.5GB - 2 Days", price: 650, apiPrice: 650 },
+    { id: 15, providerId: 3, name: "Airtel 1GB - 7 Days", price: 800, apiPrice: 800 },
+    { id: 17, providerId: 3, name: "Airtel 2GB - 30 Days", price: 1500, apiPrice: 1500 },
+    { id: 52, providerId: 3, name: "Airtel 5GB - 7 Days", price: 1599, apiPrice: 1599 },
+    { id: 18, providerId: 3, name: "Airtel 3GB - 30 Days", price: 2100, apiPrice: 2100 },
+    { id: 22, providerId: 3, name: "Airtel 6GB - 7 Days", price: 2599, apiPrice: 2599 },
+    { id: 19, providerId: 3, name: "Airtel 4GB - 30 Days", price: 2650, apiPrice: 2650 },
+    { id: 20, providerId: 3, name: "Airtel 8GB - 30 Days", price: 3200, apiPrice: 3200 },
+    { id: 21, providerId: 3, name: "Airtel 10GB - 30 Days", price: 4200, apiPrice: 4200 },
   ];
 
   const availableDataPlans = dataPlans.filter(p => p.providerId === provider);
@@ -1938,9 +1967,17 @@ const VTUTab = ({ userId }: { userId: string | null }) => {
 
     try {
       const endpoint = purchaseType === "airtime" ? "/api/vtu/airtime" : "/api/vtu/data";
+      const selectedPlan = availableDataPlans.find(p => p.id === bundleId);
+      
       const payload = purchaseType === "airtime"
         ? { userId, provider_id: provider, phone_number: phoneNumber, amount: Number(amount) }
-        : { userId, bundle_id: bundleId, phone_number: phoneNumber, provider_id: provider, amount: availableDataPlans.find(p => p.id === bundleId)?.price || 0 };
+        : { 
+            userId, 
+            bundle_id: bundleId, 
+            phone_number: phoneNumber, 
+            provider_id: provider, 
+            amount: selectedPlan?.apiPrice || selectedPlan?.price || 0 
+          };
 
       const res = await fetch(endpoint, {
         method: "POST",
@@ -2020,7 +2057,7 @@ const VTUTab = ({ userId }: { userId: string | null }) => {
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               placeholder="e.g. 08012345678"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors text-gray-900 placeholder-gray-500"
             />
           </div>
 
@@ -2035,7 +2072,7 @@ const VTUTab = ({ userId }: { userId: string | null }) => {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="Enter amount"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors text-gray-900 placeholder-gray-500"
               />
             </div>
           ) : (
@@ -2045,14 +2082,14 @@ const VTUTab = ({ userId }: { userId: string | null }) => {
                 required
                 value={bundleId}
                 onChange={(e) => setBundleId(Number(e.target.value))}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors bg-white"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors bg-white text-gray-900"
               >
                 {availableDataPlans.length > 0 ? (
                   availableDataPlans.map(plan => (
-                    <option key={plan.id} value={plan.id}>{plan.name} - ₦{plan.price}</option>
+                    <option key={plan.id} value={plan.id} className="text-gray-900">{plan.name} - ₦{plan.price}</option>
                   ))
                 ) : (
-                  <option value="" disabled>No plans available for this network</option>
+                  <option value="" disabled className="text-gray-900">No plans available for this network</option>
                 )}
               </select>
             </div>

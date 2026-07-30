@@ -5,6 +5,14 @@ import { useRouter } from "next/navigation";
 import Script from "next/script";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { 
+  SparklesIcon, 
+  ShieldCheckIcon, 
+  ChartBarIcon, 
+  BoltIcon,
+  DevicePhoneMobileIcon,
+  ArrowRightIcon
+} from "@heroicons/react/24/outline";
 
 export default function Home() {
   const router = useRouter();
@@ -45,8 +53,8 @@ export default function Home() {
           </div>
           <nav className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-gray-600 hover:text-emerald-600 transition">Features</a>
+            <a href="#data-airtime" className="text-gray-600 hover:text-emerald-600 transition">Data & Airtime</a>
             <a href="#how-it-works" className="text-gray-600 hover:text-emerald-600 transition">How It Works</a>
-            <a href="#testimonials" className="text-gray-600 hover:text-emerald-600 transition">Testimonials</a>
             <a href="#pricing" className="text-gray-600 hover:text-emerald-600 transition">Pricing</a>
           </nav>
           <div className="flex items-center gap-4">
@@ -70,25 +78,25 @@ export default function Home() {
       <main>
         <section className="max-w-7xl mx-auto px-6 py-24 md:py-32">
           <div className="text-center">
-            <div className="inline-block px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold mb-6">
+            <div className="inline-block px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold mb-6 animate-pulse">
               🚀 Trusted by 10,000+ users
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in-up">
               Start Earning Today
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
               Join thousands of users earning daily through our secure investment platform. Build your wealth with confidence.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
               <button
                 onClick={() => router.push("/register")}
-                className="px-8 py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-2xl font-semibold text-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all"
+                className="px-8 py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-2xl font-semibold text-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all hover:scale-105 transform"
               >
                 Get Started Now
               </button>
               <button
                 onClick={() => router.push("/plan")}
-                className="px-8 py-4 bg-white text-gray-900 border-2 border-gray-200 rounded-2xl font-semibold text-lg hover:border-emerald-600 hover:text-emerald-600 transition-all"
+                className="px-8 py-4 bg-white text-gray-900 border-2 border-gray-200 rounded-2xl font-semibold text-lg hover:border-emerald-600 hover:text-emerald-600 transition-all hover:scale-105 transform"
               >
                 View Plans
               </button>
@@ -96,15 +104,15 @@ export default function Home() {
             
             {/* Stats */}
             <div className="mt-16 grid grid-cols-3 gap-8 max-w-3xl mx-auto">
-              <div>
+              <div className="animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
                 <div className="text-3xl font-bold text-gray-900">$2M+</div>
                 <div className="text-gray-600">Total Invested</div>
               </div>
-              <div>
+              <div className="animate-fade-in-up" style={{ animationDelay: '0.7s' }}>
                 <div className="text-3xl font-bold text-gray-900">10K+</div>
                 <div className="text-gray-600">Active Users</div>
               </div>
-              <div>
+              <div className="animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
                 <div className="text-3xl font-bold text-gray-900">99.9%</div>
                 <div className="text-gray-600">Uptime</div>
               </div>
@@ -116,35 +124,29 @@ export default function Home() {
         <section id="features" className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Choose ATOX?</h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4 animate-fade-in-up">Why Choose ATOX?</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                 Experience the future of investing with our cutting-edge platform
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
-              <div className="p-8 bg-gradient-to-br from-emerald-50 to-white rounded-2xl border border-emerald-100 hover:shadow-xl transition-shadow">
-                <div className="w-14 h-14 bg-emerald-600 rounded-xl flex items-center justify-center mb-6">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
+              <div className="p-8 bg-gradient-to-br from-emerald-50 to-white rounded-2xl border border-emerald-100 hover:shadow-xl transition-shadow hover:scale-105 transform animate-scale-in" style={{ animationDelay: '0.3s' }}>
+                <div className="w-14 h-14 bg-emerald-600 rounded-xl flex items-center justify-center mb-6 animate-float">
+                  <ShieldCheckIcon className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Bank-Level Security</h3>
                 <p className="text-gray-600">Your investments are protected with military-grade encryption and multi-factor authentication.</p>
               </div>
-              <div className="p-8 bg-gradient-to-br from-blue-50 to-white rounded-2xl border border-blue-100 hover:shadow-xl transition-shadow">
-                <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center mb-6">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
+              <div className="p-8 bg-gradient-to-br from-blue-50 to-white rounded-2xl border border-blue-100 hover:shadow-xl transition-shadow hover:scale-105 transform animate-scale-in" style={{ animationDelay: '0.4s' }}>
+                <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center mb-6 animate-float" style={{ animationDelay: '0.5s' }}>
+                  <ChartBarIcon className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Daily Returns</h3>
                 <p className="text-gray-600">Watch your investment grow with competitive daily returns and transparent earnings.</p>
               </div>
-              <div className="p-8 bg-gradient-to-br from-purple-50 to-white rounded-2xl border border-purple-100 hover:shadow-xl transition-shadow">
-                <div className="w-14 h-14 bg-purple-600 rounded-xl flex items-center justify-center mb-6">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+              <div className="p-8 bg-gradient-to-br from-purple-50 to-white rounded-2xl border border-purple-100 hover:shadow-xl transition-shadow hover:scale-105 transform animate-scale-in" style={{ animationDelay: '0.5s' }}>
+                <div className="w-14 h-14 bg-purple-600 rounded-xl flex items-center justify-center mb-6 animate-float" style={{ animationDelay: '0.6s' }}>
+                  <SparklesIcon className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Instant Withdrawals</h3>
                 <p className="text-gray-600">Access your earnings anytime with our fast and secure withdrawal process.</p>
@@ -153,36 +155,136 @@ export default function Home() {
           </div>
         </section>
 
-        {/* How它 Works Section */}
+        {/* Data & Airtime Section */}
+        <section id="data-airtime" className="py-20 bg-gradient-to-br from-gray-50 to-emerald-50">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4 animate-fade-in-up">Data & Airtime Services</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                Instant recharge for all major networks at competitive prices
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow animate-slide-in-left" style={{ animationDelay: '0.3s' }}>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center">
+                    <BoltIcon className="w-8 h-8 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900">Airtime Recharge</h3>
+                    <p className="text-gray-600">Instant top-up for all networks</p>
+                  </div>
+                </div>
+                <ul className="space-y-3 mb-6">
+                  <li className="flex items-center gap-3 text-gray-700">
+                    <div className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center">
+                      <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    MTN, Airtel, Glo, 9mobile
+                  </li>
+                  <li className="flex items-center gap-3 text-gray-700">
+                    <div className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center">
+                      <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    Instant delivery
+                  </li>
+                  <li className="flex items-center gap-3 text-gray-700">
+                    <div className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center">
+                      <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    Best rates guaranteed
+                  </li>
+                </ul>
+                <button
+                  onClick={() => router.push("/register")}
+                  className="w-full py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105 transform"
+                >
+                  Get Started
+                </button>
+              </div>
+              <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow animate-slide-in-right" style={{ animationDelay: '0.4s' }}>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center">
+                    <DevicePhoneMobileIcon className="w-8 h-8 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900">Data Bundles</h3>
+                    <p className="text-gray-600">Affordable data plans for everyone</p>
+                  </div>
+                </div>
+                <ul className="space-y-3 mb-6">
+                  <li className="flex items-center gap-3 text-gray-700">
+                    <div className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center">
+                      <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    All networks supported
+                  </li>
+                  <li className="flex items-center gap-3 text-gray-700">
+                    <div className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center">
+                      <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    Various data sizes
+                  </li>
+                  <li className="flex items-center gap-3 text-gray-700">
+                    <div className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center">
+                      <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    Validity from 1-30 days
+                  </li>
+                </ul>
+                <button
+                  onClick={() => router.push("/register")}
+                  className="w-full py-3 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105 transform"
+                >
+                  Browse Plans
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* How It Works Section */}
         <section id="how-it-works" className="py-20 bg-gradient-to-br from-gray-50 to-white">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4 animate-fade-in-up">How It Works</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                 Start earning in just 3 simple steps
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl font-bold">
+              <div className="text-center animate-scale-in" style={{ animationDelay: '0.3s' }}>
+                <div className="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl font-bold animate-float">
                   1
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Create Account</h3>
                 <p className="text-gray-600">Sign up in seconds with just your email. No complex verification required.</p>
               </div>
-              <div className="text-center">
-                <div className="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl font-bold">
+              <div className="text-center animate-scale-in" style={{ animationDelay: '0.4s' }}>
+                <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl font-bold animate-float" style={{ animationDelay: '0.5s' }}>
                   2
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Choose Plan</h3>
-                <p className="text-gray-600">Select from our flexible investment plans that suit your budget and goals.</p>
+                <p className="text-gray-600">Select from our range of investment plans that suit your budget and goals.</p>
               </div>
-              <div className="text-center">
-                <div className="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl font-bold">
+              <div className="text-center animate-scale-in" style={{ animationDelay: '0.5s' }}>
+                <div className="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl font-bold animate-float" style={{ animationDelay: '0.6s' }}>
                   3
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Start Earning</h3>
-                <p className="text-gray-600">Watch your investment grow daily with automatic returns to your account.</p>
+                <p className="text-gray-600">Watch your investment grow daily with our automated earning system.</p>
               </div>
             </div>
           </div>
@@ -192,13 +294,13 @@ export default function Home() {
         <section id="testimonials" className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">What Our Users Say</h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4 animate-fade-in-up">What Our Users Say</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                 Join thousands of satisfied investors
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
-              <div className="p-6 bg-gray-50 rounded-2xl">
+              <div className="p-6 bg-gray-50 rounded-2xl hover:shadow-xl transition-shadow hover:scale-105 transform animate-scale-in" style={{ animationDelay: '0.3s' }}>
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -206,16 +308,18 @@ export default function Home() {
                     </svg>
                   ))}
                 </div>
-                <p className="text-gray-700 mb-4">"ATOX has changed my financial life. The daily returns are consistent and withdrawals are instant. Highly recommended!"</p>
+                <p className="text-gray-700 mb-4">"ATOX has completely changed my financial situation. The daily returns are consistent and the platform is so easy to use."</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-emerald-200 rounded-full flex items-center justify-center text-emerald-700 font-bold">AO</div>
+                  <div className="w-12 h-12 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">
+                    JD
+                  </div>
                   <div>
-                    <div className="font-semibold text-gray-900">Adebayo O.</div>
-                    <div className="text-sm text-gray-600">Lagos, Nigeria</div>
+                    <p className="font-semibold text-gray-900">John Doe</p>
+                    <p className="text-sm text-gray-500">VIP 3 Member</p>
                   </div>
                 </div>
               </div>
-              <div className="p-6 bg-gray-50 rounded-2xl">
+              <div className="p-6 bg-gray-50 rounded-2xl hover:shadow-xl transition-shadow hover:scale-105 transform animate-scale-in" style={{ animationDelay: '0.4s' }}>
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -223,16 +327,18 @@ export default function Home() {
                     </svg>
                   ))}
                 </div>
-                <p className="text-gray-700 mb-4">"I was skeptical at first, but ATOX proved me wrong. The platform is secure and the support team is excellent. Best decision ever!"</p>
+                <p className="text-gray-700 mb-4">"I was skeptical at first, but after 3 months, I've earned more than I ever expected. Highly recommended!"</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center text-blue-700 font-bold">CI</div>
+                  <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                    SA
+                  </div>
                   <div>
-                    <div className="font-semibold text-gray-900">Chinedu I.</div>
-                    <div className="text-sm text-gray-600">Abuja, Nigeria</div>
+                    <p className="font-semibold text-gray-900">Sarah Adams</p>
+                    <p className="text-sm text-gray-500">VIP 2 Member</p>
                   </div>
                 </div>
               </div>
-              <div className="p-6 bg-gray-50 rounded-2xl">
+              <div className="p-6 bg-gray-50 rounded-2xl hover:shadow-xl transition-shadow hover:scale-105 transform animate-scale-in" style={{ animationDelay: '0.5s' }}>
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -240,12 +346,14 @@ export default function Home() {
                     </svg>
                   ))}
                 </div>
-                <p className="text-gray-700 mb-4">"The flexibility of investment plans is amazing. I started small and now I'm earning significant daily returns. Thank you ATOX!"</p>
+                <p className="text-gray-700 mb-4">"The customer support is excellent and the withdrawal process is seamless. A trustworthy platform indeed."</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-purple-200 rounded-full flex items-center justify-center text-purple-700 font-bold">FA</div>
+                  <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                    MK
+                  </div>
                   <div>
-                    <div className="font-semibold text-gray-900">Fatima A.</div>
-                    <div className="text-sm text-gray-600">Kano, Nigeria</div>
+                    <p className="font-semibold text-gray-900">Michael Kim</p>
+                    <p className="text-sm text-gray-500">VIP 1 Member</p>
                   </div>
                 </div>
               </div>
@@ -257,13 +365,13 @@ export default function Home() {
         <section id="pricing" className="py-20 bg-gradient-to-br from-emerald-50 to-white">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">Investment Plans</h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4 animate-fade-in-up">Investment Plans</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                 Choose the plan that fits your investment goals
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
-              <div className="p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition-shadow">
+              <div className="p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition-shadow hover:scale-105 transform animate-scale-in" style={{ animationDelay: '0.3s' }}>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Starter</h3>
                 <div className="text-4xl font-bold text-gray-900 mb-1">₦5,000</div>
                 <p className="text-gray-600 mb-6">Minimum investment</p>
@@ -278,95 +386,83 @@ export default function Home() {
                     <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    24/7 support
+                    20 daily ad tasks
                   </li>
                   <li className="flex items-center gap-2 text-gray-700">
                     <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    Instant withdrawals
+                    ₦750 daily income
                   </li>
                 </ul>
                 <button
                   onClick={() => router.push("/register")}
-                  className="w-full py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition"
+                  className="w-full py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all hover:shadow-lg"
                 >
                   Get Started
                 </button>
               </div>
-              <div className="p-8 bg-gradient-to-br from-emerald-600 to-green-600 rounded-2xl text-white relative overflow-hidden">
-                <div className="absolute top-4 right-4 bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-full">
+              <div className="p-8 bg-gradient-to-br from-emerald-600 to-green-600 to-white rounded-2xl border border-emerald-200 hover:shadow-xl transition-shadow hover:scale-105 transform animate-scale-in relative" style={{ animationDelay: '0.4s' }}>
+                <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-xl">
                   POPULAR
                 </div>
-                <h3 className="text-xl font-bold mb-2">Professional</h3>
-                <div className="text-4xl font-bold mb-1">₦25,000</div>
+                <h3 className="text-xl font-bold text-white mb-2">Professional</h3>
+                <div className="text-4xl font-bold text-white mb-1">₦10,000</div>
                 <p className="text-emerald-100 mb-6">Minimum investment</p>
                 <ul className="space-y-3 mb-8">
-                  <li className="flex items-center gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <li className="flex items-center gap-2 text-white">
+                    <svg className="w-5 h-5 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     3% daily returns
                   </li>
-                  <li className="flex items-center gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <li className="flex items-center gap-2 text-white">
+                    <svg className="w-5 h-5 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    Priority support
+                    35 daily ad tasks
                   </li>
-                  <li className="flex items-center gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <li className="flex items-center gap-2 text-white">
+                    <svg className="w-5 h-5 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    Instant withdrawals
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    Bonus earnings
+                    ₦1,200 daily income
                   </li>
                 </ul>
                 <button
                   onClick={() => router.push("/register")}
-                  className="w-full py-3 bg-white text-emerald-600 rounded-xl font-semibold hover:bg-gray-100 transition"
+                  className="w-full py-3 bg-white text-emerald-600 rounded-xl font-semibold hover:bg-gray-100 transition-all hover:shadow-lg"
                 >
                   Get Started
                 </button>
               </div>
-              <div className="p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition-shadow">
+              <div className="p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition-shadow hover:scale-105 transform animate-scale-in" style={{ animationDelay: '0.5s' }}>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Enterprise</h3>
-                <div className="text-4xl font-bold text-gray-900 mb-1">₦100,000</div>
+                <div className="text-4xl font-bold text-gray-900 mb-1">₦25,000</div>
                 <p className="text-gray-600 mb-6">Minimum investment</p>
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-center gap-2 text-gray-700">
                     <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    5% daily returns
+                    4% daily returns
                   </li>
                   <li className="flex items-center gap-2 text-gray-700">
                     <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    Dedicated manager
+                    50 daily ad tasks
                   </li>
                   <li className="flex items-center gap-2 text-gray-700">
                     <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    Instant withdrawals
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-700">
-                    <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    VIP benefits
+                    ₦2,200 daily income
                   </li>
                 </ul>
                 <button
                   onClick={() => router.push("/register")}
-                  className="w-full py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition"
+                  className="w-full py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all hover:shadow-lg"
                 >
                   Get Started
                 </button>
@@ -377,14 +473,14 @@ export default function Home() {
 
         {/* CTA Section */}
         <section className="py-20 bg-gradient-to-r from-emerald-600 to-green-600">
-          <div className="max-w-4xl mx-auto px-6 text-center">
+          <div className="max-w-4xl mx-auto px-6 text-center animate-fade-in-up">
             <h2 className="text-4xl font-bold text-white mb-4">Ready to Start Earning?</h2>
             <p className="text-xl text-emerald-100 mb-8">
               Join thousands of users who are already building their wealth with ATOX
             </p>
             <button
               onClick={() => router.push("/register")}
-              className="px-8 py-4 bg-white text-emerald-600 rounded-2xl font-semibold text-lg hover:shadow-lg transition-all"
+              className="px-8 py-4 bg-white text-emerald-600 rounded-2xl font-semibold text-lg hover:shadow-lg transition-all hover:scale-105 transform"
             >
               Create Free Account
             </button>
@@ -418,33 +514,36 @@ export default function Home() {
             <div className="grid md:grid-cols-4 gap-8 mb-8">
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <img src="/logo.jpg?v=2" alt="Atox Logo" className="h-8 w-auto" />
+                  <img src="/logo.jpg?v=2" alt="Atox Logo" className="h-10 w-auto" />
                   <span className="text-xl font-bold">ATOX</span>
                 </div>
-                <p className="text-gray-400">Your trusted partner for secure and profitable investments.</p>
+                <p className="text-gray-400 text-sm">
+                  Your trusted partner for secure investments and digital services.
+                </p>
               </div>
               <div>
-                <h4 className="font-semibold mb-4">Quick Links</h4>
+                <h4 className="font-bold mb-4">Quick Links</h4>
                 <ul className="space-y-2 text-gray-400">
                   <li><a href="#features" className="hover:text-white transition">Features</a></li>
+                  <li><a href="#data-airtime" className="hover:text-white transition">Data & Airtime</a></li>
                   <li><a href="#how-it-works" className="hover:text-white transition">How It Works</a></li>
                   <li><a href="#pricing" className="hover:text-white transition">Pricing</a></li>
-                  <li><a href="#testimonials" className="hover:text-white transition">Testimonials</a></li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold mb-4">Legal</h4>
+                <h4 className="font-bold mb-4">Support</h4>
                 <ul className="space-y-2 text-gray-400">
-                  <li><a href="#" className="hover:text-white transition">Privacy Policy</a></li>
-                  <li><a href="#" className="hover:text-white transition">Terms of Service</a></li>
-                  <li><a href="#" className="hover:text-white transition">Refund Policy</a></li>
+                  <li><a href="/about" className="hover:text-white transition">About Us</a></li>
+                  <li><a href="#" className="hover:text-white transition">Contact</a></li>
+                  <li><a href="#" className="hover:text-white transition">FAQ</a></li>
+                  <li><a href="#" className="hover:text-white transition">Terms</a></li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold mb-4">Contact</h4>
+                <h4 className="font-bold mb-4">Contact</h4>
                 <ul className="space-y-2 text-gray-400">
                   <li>support@atox-earning.com</li>
-                  <li>+234 XXX XXX XXXX</li>
+                  <li>+234 800 123 4567</li>
                   <li>Lagos, Nigeria</li>
                 </ul>
               </div>
