@@ -52,6 +52,8 @@ const formatCurrency = (amount: number) => {
 
 // --- Sidebar Component ---
 const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab: (tab: string) => void }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const menuItems = [
     { id: "home", label: "Home", icon: HomeIcon },
     { id: "tasks", label: "Tasks", icon: ListBulletIcon },
@@ -59,12 +61,108 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
     { id: "team", label: "Team", icon: UsersIcon },
     { id: "notifications", label: "Notifications", icon: BellIcon },
     { id: "support", label: "Customer Care", icon: ChatBubbleLeftRightIcon },
-    { id: "vtu", label: "Cashflow", icon: DevicePhoneMobileIcon },
+    { id: "vtu", label: "Data and Airtime", icon: DevicePhoneMobileIcon },
+    { id: "profile", label: "Profile", icon: UserIcon },
+  ];
+
+  // Mobile bottom nav - only show 4 main items
+  const mobileMenuItems = [
+    { id: "home", label: "Home", icon: HomeIcon },
+    { id: "tasks", label: "Tasks", icon: ListBulletIcon },
+    { id: "products", label: "Products", icon: ShoppingBagIcon },
     { id: "profile", label: "Profile", icon: UserIcon },
   ];
 
   return (
     <>
+      {/* Mobile Menu Button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-50 transition"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {mobileMenuOpen ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile Sidebar Drawer */}
+      {mobileMenuOpen && (
+        <>
+          <div
+            className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="lg:hidden fixed left-0 top-0 bottom-0 w-80 max-w-[85vw] bg-gradient-to-b from-emerald-900 to-emerald-800 text-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out">
+            <div className="flex flex-col h-full">
+              <div className="p-5 border-b border-white/10 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <img
+                    src="/logo.jpg"
+                    alt="ATOX Logo"
+                    width={100}
+                    height={35}
+                    className="object-contain rounded-lg bg-white/10 p-1"
+                  />
+                </div>
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+                {menuItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setActiveTab(item.id);
+                        setMobileMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-4 px-4 py-4 rounded-xl transition-all duration-200 group ${activeTab === item.id
+                        ? "bg-white/20 text-white shadow-lg shadow-black/20"
+                        : "text-white/70 hover:bg-white/10 hover:text-white"
+                        }`}
+                    >
+                      <Icon className={`w-6 h-6 flex-shrink-0 ${activeTab === item.id ? "text-white" : "text-white/50 group-hover:text-white/70"
+                        }`} />
+                      <span className="font-medium text-base">{item.label}</span>
+                      {activeTab === item.id && (
+                        <span className="ml-auto w-1.5 h-8 bg-white rounded-full" />
+                      )}
+                    </button>
+                  );
+                })}
+              </nav>
+
+              <div className="p-4 border-t border-white/10">
+                <button
+                  onClick={async () => {
+                    await signOut(auth);
+                    window.location.href = "/login";
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-white/70 hover:bg-red-500/20 hover:text-red-400 transition-all duration-200 group"
+                >
+                  <ArrowRightOnRectangleIcon className="w-6 h-6 flex-shrink-0 group-hover:rotate-12 transition-transform" />
+                  <span className="font-medium text-base">Logout</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Desktop Sidebar */}
       <div className="hidden lg:block w-72 h-screen sticky top-0 bg-gradient-to-b from-emerald-900 to-emerald-800 text-white shadow-2xl">
         <div className="flex flex-col h-full">
@@ -120,20 +218,20 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
 
       {/* Mobile Bottom Navigation */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 shadow-lg">
-        <div className="flex justify-around items-center px-2 py-1">
-          {menuItems.map((item) => {
+        <div className="flex justify-around items-center px-2 py-2">
+          {mobileMenuItems.map((item) => {
             const Icon = item.icon;
             return (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all ${activeTab === item.id
+                className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${activeTab === item.id
                   ? "text-emerald-600"
                   : "text-gray-400 hover:text-gray-600"
                   }`}
               >
                 <Icon className="w-6 h-6" />
-                <span className="text-[10px] font-medium">{item.label}</span>
+                <span className="text-[11px] font-medium">{item.label}</span>
                 {activeTab === item.id && (
                   <span className="w-4 h-0.5 bg-emerald-500 rounded-full" />
                 )}

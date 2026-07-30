@@ -58,28 +58,44 @@ import Link from "next/link";
     };
 
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 px-5">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-50/30">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-md py-4 px-6 shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src="/logo.jpg?v=2" alt="Atox Logo" className="h-10 w-auto" />
+            <span className="text-xl font-bold text-gray-900">ATOX</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/register"
+              className="px-5 py-2 text-emerald-600 font-semibold hover:bg-emerald-50 rounded-xl transition"
+            >
+              Register
+            </Link>
+            <Link
+              href="/"
+              className="px-5 py-2 text-gray-600 font-semibold hover:bg-gray-50 rounded-xl transition"
+            >
+              Home
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex items-center justify-center px-5 py-16">
         <div className="w-full max-w-md">
           {/* Logo/Brand Section */}
           <div className="text-center mb-8">
-            <div className="flex justify-center mb-3">
-              <img
-                src="/logo.jpg"
-                alt="ATOX Investment Platform Logo"
-                width={180}
-                height={60}
-                className="object-contain rounded-xl"
-              />
+            <div className="inline-block px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold mb-4">
+              👋 Welcome back
             </div>
-            <h1 className="text-3xl font-bold text-gray-900">ATOX Investment Platform</h1>
-            <p className="text-gray-600 mt-2">Welcome back! Login to your account</p>
-            <div className="inline-flex items-center gap-1 mt-2 bg-green-100 px-3 py-1 rounded-full">
-              <span className="text-sm font-semibold text-green-700">🇳🇬 Nigeria</span>
-            </div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-3">Login to Your Account</h1>
+            <p className="text-lg text-gray-600">Continue your earning journey</p>
           </div>
 
           {/* Login Form */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg mb-4 text-sm">
                 {error}
@@ -96,7 +112,7 @@ import Link from "next/link";
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all"
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
                   required
                 />
               </div>
@@ -110,13 +126,13 @@ import Link from "next/link";
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all"
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
                   required
                 />
               </div>
 
               <div className="flex justify-end">
-                <Link href="/forgot-password" className="text-sm text-green-600 hover:text-green-700 font-medium">
+                <Link href="/forgot-password" className="text-sm text-emerald-600 hover:text-emerald-700 font-medium">
                   Forgot Password?
                 </Link>
               </div>
@@ -124,7 +140,7 @@ import Link from "next/link";
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition-all duration-200 disabled:opacity-50 shadow-md"
+                className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-200 disabled:opacity-50"
               >
                 {loading ? "Logging in..." : "Login to Dashboard"}
               </button>
@@ -133,36 +149,30 @@ import Link from "next/link";
             <div className="mt-6 pt-6 border-t border-gray-200 text-center">
               <p className="text-gray-600">
                 Don't have an account?{" "}
-                <Link href="/register" className="text-green-600 hover:text-green-700 font-semibold">
-                  Create free account
+                <Link href="/register" className="text-emerald-600 hover:text-emerald-700 font-semibold">
+                  Create free account →
                 </Link>
               </p>
             </div>
           </div>
 
-          {/* Features Section - Nigeria Naira */}
+          {/* Features Section */}
           <div className="mt-8 grid grid-cols-3 gap-4 text-center">
-            <div className="bg-white/50 rounded-lg p-3">
-              <div className="text-green-600 font-bold text-xl">₦0</div>
-              <div className="text-xs text-gray-600">Min Withdraw</div>
+            <div className="bg-white rounded-xl p-4 border border-gray-100">
+              <div className="text-emerald-600 font-bold text-xl">₦0</div>
+              <div className="text-xs text-gray-600 mt-1">Min Withdraw</div>
             </div>
-            <div className="bg-white/50 rounded-lg p-3">
-              <div className="text-green-600 font-bold text-xl">24/7</div>
-              <div className="text-xs text-gray-600">Support</div>
+            <div className="bg-white rounded-xl p-4 border border-gray-100">
+              <div className="text-emerald-600 font-bold text-xl">24/7</div>
+              <div className="text-xs text-gray-600 mt-1">Support</div>
             </div>
-            <div className="bg-white/50 rounded-lg p-3">
-              <div className="text-green-600 font-bold text-xl">Instant</div>
-              <div className="text-xs text-gray-600">Payments</div>
+            <div className="bg-white rounded-xl p-4 border border-gray-100">
+              <div className="text-emerald-600 font-bold text-xl">Instant</div>
+              <div className="text-xs text-gray-600 mt-1">Payments</div>
             </div>
-          </div>
-
-          {/* Adsterra Site Verification */}
-          <div className="mt-6 text-center">
-            <span className="inline-block text-xs text-gray-400 font-mono tracking-widest bg-white/40 border border-gray-200 px-3 py-1 rounded-full select-all">
-              NIGERIA
-            </span>
           </div>
         </div>
-      </div>
-    );
+      </main>
+    </div>
+  );
   }
