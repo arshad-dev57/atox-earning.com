@@ -14,6 +14,8 @@ import {
   addDoc,
   serverTimestamp,
   getDoc,
+  Timestamp,
+  writeBatch,
 } from "firebase/firestore";
 import {
   CheckCircleIcon,
@@ -25,7 +27,13 @@ import {
   ArrowRightOnRectangleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ChatBubbleLeftRightIcon,
+  MagnifyingGlassIcon,
+  Bars3Icon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { getPlan } from "@/lib/plans";
+import { isPurchaseActive } from "@/lib/purchases";
 
 const PAGE_SIZE = 10;
 
@@ -92,36 +100,6 @@ const Pagination = ({
   );
 };
 
-const PRODUCTS = [
-  {
-    id: "vip1",
-    name: "VIP 1",
-    ads: 20,
-    price: 3000,
-    term: "30 days",
-    dailyIncome: 750,
-    totalIncome: 22000,
-  },
-  {
-    id: "vip2",
-    name: "VIP 2",
-    ads: 35,
-    price: 5000,
-    term: "30 days",
-    dailyIncome: 1200,
-    totalIncome: 36000,
-  },
-  {
-    id: "vip3",
-    name: "VIP 3",
-    ads: 50,
-    price: 10000,
-    term: "30 days",
-    dailyIncome: 2200,
-    totalIncome: 66000,
-  },
-];
-
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
@@ -153,6 +131,9 @@ const StatusBadge = ({ status }: { status: string }) => {
     approved: "bg-emerald-50 text-emerald-700",
     rejected: "bg-red-50 text-red-700",
     pending: "bg-yellow-50 text-yellow-700",
+    active: "bg-emerald-50 text-emerald-700",
+    cancelled: "bg-red-50 text-red-700",
+    expired: "bg-orange-50 text-orange-700",
   };
   return (
     <span className={`px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${colors[status] || "bg-gray-50 text-gray-700"}`}>
@@ -161,8 +142,16 @@ const StatusBadge = ({ status }: { status: string }) => {
   );
 };
 
+const getPurchaseStatus = (item: any) => {
+  if (item.status === "cancelled") return "cancelled";
+  if (item.status === "expired") return "expired";
+  if (!isPurchaseActive(item)) return "expired";
+  return "active";
+};
+
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState("recharges");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [recharges, setRecharges] = useState<any[]>([]);
   const [withdrawals, setWithdrawals] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
@@ -174,11 +163,32 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [pages, setPages] = useState<Record<string, number>>({});
+  const [purchaseSearch, setPurchaseSearch] = useState("");
+  const [msgTarget, setMsgTarget] = useState<"all" | "user">("user");
+  const [msgUserId, setMsgUserId] = useState("");
+  const [msgTitle, setMsgTitle] = useState("");
+  const [msgBody, setMsgBody] = useState("");
+  const [msgType, setMsgType] = useState<"success" | "error" | "info">("info");
+  const [msgSending, setMsgSending] = useState(false);
   const router = useRouter();
 
   const getPage = (key: string) => pages[key] || 1;
   const setPage = (key: string, page: number) =>
     setPages((prev) => ({ ...prev, [key]: page }));
+
+  const filteredPurchases = purchases.filter((p) => {
+    if (!purchaseSearch.trim()) return true;
+    const q = purchaseSearch.trim().toLowerCase();
+    const user = users.find((u) => u.id === p.userId);
+    return (
+      p.userId?.toLowerCase().includes(q) ||
+      p.name?.toLowerCase().includes(q) ||
+      p.productId?.toLowerCase().includes(q) ||
+      user?.fullName?.toLowerCase().includes(q) ||
+      user?.email?.toLowerCase().includes(q) ||
+      user?.phone?.toLowerCase().includes(q)
+    );
+  });
 
   const rechargesPendingPage = paginate(recharges, getPage("rechargesPending"));
   const rechargesHistoryPage = paginate(rechargeHistory, getPage("rechargesHistory"));
@@ -186,7 +196,7 @@ export default function AdminPage() {
   const withdrawalsHistoryPage = paginate(withdrawalHistory, getPage("withdrawalsHistory"));
   const paymentsPendingPage = paginate(payments, getPage("paymentsPending"));
   const paymentsHistoryPage = paginate(paymentHistory, getPage("paymentsHistory"));
-  const purchasesPage = paginate(purchases, getPage("purchases"));
+  const purchasesPage = paginate(filteredPurchases, getPage("purchases"));
   const usersPage = paginate(users, getPage("users"));
 
   // Strict authentication check checking for the admin flag
@@ -360,7 +370,7 @@ export default function AdminPage() {
   const handleApprovePayment = async (id: string, userId: string, productId: string, productName: string, amount: number) => {
     setActionLoading(`approve-payment-${id}`);
     try {
-      const product = PRODUCTS.find((p) => p.id === productId);
+      const product = getPlan(productId);
       if (!product) {
         toast.error("Product not found!");
         return;
@@ -369,36 +379,68 @@ export default function AdminPage() {
       const docRef = doc(db, "payments", id);
       await updateDoc(docRef, { status: "approved" });
 
+      const expiresAt = Timestamp.fromDate(
+        new Date(Date.now() + product.durationDays * 24 * 60 * 60 * 1000)
+      );
+
       await addDoc(collection(db, "purchases"), {
         userId,
         productId: product.id,
         name: product.name,
         ads: product.ads,
-        price: product.price,
+        price: amount || product.price,
         dailyIncome: product.dailyIncome,
         totalIncome: product.totalIncome,
+        durationDays: product.durationDays,
+        status: "active",
+        expiresAt,
         purchasedAt: serverTimestamp(),
       });
 
       const userDoc = await getDoc(doc(db, "users", userId));
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        if (userData.referredBy) {
+        const purchaseAmount = amount || product.price;
+
+        // Level 1 — 10% of first purchase only
+        if (userData.referredBy && !userData.referralBonusPaid) {
           const referrerRef = doc(db, "users", userData.referredBy);
           const referrerDoc = await getDoc(referrerRef);
           if (referrerDoc.exists()) {
-            const referralBonus = product.price * 0.10;
+            const level1Bonus = purchaseAmount * 0.1;
             await updateDoc(referrerRef, {
-              referralBalance: increment(referralBonus),
-              referralCount: increment(1)
+              referralBalance: increment(level1Bonus),
+              referralCount: increment(1),
             });
             await addDoc(collection(db, "notifications"), {
               userId: userData.referredBy,
               title: "Referral Bonus Received!",
-              message: `You earned ${formatCurrency(referralBonus)} from a referral's purchase of ${productName}.`,
+              message: `You earned ${formatCurrency(level1Bonus)} (10%) from a referral's first purchase of ${productName}.`,
               type: "success",
               createdAt: serverTimestamp(),
             });
+
+            // Level 2 — 3% to upline of the referrer
+            const level1Data = referrerDoc.data();
+            if (level1Data.referredBy) {
+              const level2Ref = doc(db, "users", level1Data.referredBy);
+              const level2Doc = await getDoc(level2Ref);
+              if (level2Doc.exists()) {
+                const level2Bonus = purchaseAmount * 0.03;
+                await updateDoc(level2Ref, {
+                  referralBalance: increment(level2Bonus),
+                });
+                await addDoc(collection(db, "notifications"), {
+                  userId: level1Data.referredBy,
+                  title: "Level 2 Referral Bonus!",
+                  message: `You earned ${formatCurrency(level2Bonus)} (3%) from a level-2 referral purchase.`,
+                  type: "success",
+                  createdAt: serverTimestamp(),
+                });
+              }
+            }
+
+            await updateDoc(doc(db, "users", userId), { referralBonusPaid: true });
           }
         }
       }
@@ -406,7 +448,7 @@ export default function AdminPage() {
       await addDoc(collection(db, "notifications"), {
         userId,
         title: "Purchase Approved",
-        message: `Your purchase of ${productName} has been approved.`,
+        message: `Your purchase of ${productName} has been approved and is active for ${product.durationDays} days.`,
         type: "success",
         createdAt: serverTimestamp(),
       });
@@ -418,6 +460,101 @@ export default function AdminPage() {
       toast.error("Failed to approve payment.");
     } finally {
       setActionLoading(null);
+    }
+  };
+
+  const handleUpdatePurchaseStatus = async (
+    purchaseId: string,
+    userId: string,
+    productName: string,
+    status: "cancelled" | "expired"
+  ) => {
+    setActionLoading(`${status}-purchase-${purchaseId}`);
+    try {
+      await updateDoc(doc(db, "purchases", purchaseId), {
+        status,
+        expiresAt: Timestamp.now(),
+        updatedAt: serverTimestamp(),
+        ...(status === "cancelled"
+          ? { cancelledAt: serverTimestamp() }
+          : { expiredAt: serverTimestamp() }),
+      });
+
+      await addDoc(collection(db, "notifications"), {
+        userId,
+        title: status === "cancelled" ? "Purchase Cancelled" : "Purchase Expired",
+        message:
+          status === "cancelled"
+            ? `Your ${productName} plan has been cancelled by admin.`
+            : `Your ${productName} plan has been marked as expired by admin.`,
+        type: "error",
+        createdAt: serverTimestamp(),
+      });
+
+      toast.success(`Purchase ${status}.`);
+      fetchData();
+    } catch (error) {
+      console.error(`Error marking purchase ${status}:`, error);
+      toast.error(`Failed to ${status === "cancelled" ? "cancel" : "expire"} purchase.`);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!msgTitle.trim() || !msgBody.trim()) {
+      toast.error("Title and message are required.");
+      return;
+    }
+    if (msgTarget === "user" && !msgUserId) {
+      toast.error("Select a user.");
+      return;
+    }
+
+    setMsgSending(true);
+    try {
+      const targets =
+        msgTarget === "all"
+          ? users.filter((u) => !u.isAdmin).map((u) => u.id)
+          : [msgUserId];
+
+      if (targets.length === 0) {
+        toast.error("No users to message.");
+        return;
+      }
+
+      const chunkSize = 400;
+      for (let i = 0; i < targets.length; i += chunkSize) {
+        const chunk = targets.slice(i, i + chunkSize);
+        const batch = writeBatch(db);
+        chunk.forEach((uid) => {
+          const ref = doc(collection(db, "notifications"));
+          batch.set(ref, {
+            userId: uid,
+            title: msgTitle.trim(),
+            message: msgBody.trim(),
+            type: msgType === "info" ? "success" : msgType,
+            source: "admin",
+            createdAt: serverTimestamp(),
+          });
+        });
+        await batch.commit();
+      }
+
+      toast.success(
+        msgTarget === "all"
+          ? `Message sent to ${targets.length} users.`
+          : "Message sent to user."
+      );
+      setMsgTitle("");
+      setMsgBody("");
+      setMsgUserId("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast.error("Failed to send message.");
+    } finally {
+      setMsgSending(false);
     }
   };
 
@@ -454,80 +591,132 @@ export default function AdminPage() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
-      {/* Sidebar */}
-      <div className="w-full md:w-64 bg-slate-900 text-white min-h-screen p-6">
-        <h1 className="text-2xl font-bold mb-8">Admin Dashboard</h1>
-        <nav className="space-y-2">
-          <button
-            onClick={() => setActiveTab("recharges")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${activeTab === "recharges" ? "bg-slate-800 text-emerald-400" : "hover:bg-slate-800/50"}`}
-          >
-            <WalletIcon className="w-5 h-5" />
-            Recharges ({recharges.length})
-          </button>
-          <button
-            onClick={() => setActiveTab("withdrawals")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${activeTab === "withdrawals" ? "bg-slate-800 text-emerald-400" : "hover:bg-slate-800/50"}`}
-          >
-            <ArrowUpIcon className="w-5 h-5" />
-            Withdrawals ({withdrawals.length})
-          </button>
-          <button
-            onClick={() => setActiveTab("payments")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${activeTab === "payments" ? "bg-slate-800 text-emerald-400" : "hover:bg-slate-800/50"}`}
-          >
-            <ShoppingBagIcon className="w-5 h-5" />
-            Purchases ({payments.length})
-          </button>
-          <button
-            onClick={() => setActiveTab("purchaseHistory")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${activeTab === "purchaseHistory" ? "bg-slate-800 text-emerald-400" : "hover:bg-slate-800/50"}`}
-          >
-            <ShoppingBagIcon className="w-5 h-5" />
-            Completed ({purchases.length})
-          </button>
-          <button
-            onClick={() => setActiveTab("users")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${activeTab === "users" ? "bg-slate-800 text-emerald-400" : "hover:bg-slate-800/50"}`}
-          >
-            <UsersIcon className="w-5 h-5" />
-            Users ({users.length})
-          </button>
-        </nav>
-        
-        <div className="mt-8 border-t border-slate-800 pt-8">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-slate-800/50 transition"
-          >
-            <ArrowRightOnRectangleIcon className="w-5 h-5" />
-            Logout
-          </button>
-        </div>
+  const selectTab = (tab: string) => {
+    setActiveTab(tab);
+    setSidebarOpen(false);
+  };
+
+  const pageTitle =
+    activeTab === "users"
+      ? "Users"
+      : activeTab === "payments"
+        ? "Pending Purchases"
+        : activeTab === "purchaseHistory"
+          ? "Manage User Plans"
+          : activeTab === "messages"
+            ? "Message Users"
+            : `Pending ${activeTab}`;
+
+  const navBtn = (tab: string, label: string, Icon: typeof WalletIcon) => (
+    <button
+      type="button"
+      onClick={() => selectTab(tab)}
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${
+        activeTab === tab ? "bg-slate-800 text-emerald-400" : "hover:bg-slate-800/50 text-slate-200"
+      }`}
+    >
+      <Icon className="w-5 h-5 shrink-0" />
+      <span className="text-left">{label}</span>
+    </button>
+  );
+
+  const sidebarContent = (
+    <>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-xl md:text-2xl font-bold">Admin Dashboard</h1>
+        <button
+          type="button"
+          onClick={() => setSidebarOpen(false)}
+          className="md:hidden p-2 rounded-lg hover:bg-slate-800 text-slate-300"
+          aria-label="Close menu"
+        >
+          <XMarkIcon className="w-6 h-6" />
+        </button>
       </div>
+      <nav className="space-y-2 flex-1">
+        {navBtn("recharges", `Recharges (${recharges.length})`, WalletIcon)}
+        {navBtn("withdrawals", `Withdrawals (${withdrawals.length})`, ArrowUpIcon)}
+        {navBtn("payments", `Purchases (${payments.length})`, ShoppingBagIcon)}
+        {navBtn("purchaseHistory", `Manage Plans (${purchases.length})`, ShoppingBagIcon)}
+        {navBtn("messages", "Messages", ChatBubbleLeftRightIcon)}
+        {navBtn("users", `Users (${users.length})`, UsersIcon)}
+      </nav>
+      <div className="mt-8 border-t border-slate-800 pt-6">
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-slate-800/50 transition"
+        >
+          <ArrowRightOnRectangleIcon className="w-5 h-5" />
+          Logout
+        </button>
+      </div>
+    </>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <button
+          type="button"
+          aria-label="Close menu overlay"
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex md:w-64 md:flex-col md:shrink-0 bg-slate-900 text-white min-h-screen p-6 sticky top-0 h-screen overflow-y-auto">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile drawer */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-[min(20rem,85vw)] bg-slate-900 text-white p-6 flex flex-col transform transition-transform duration-300 ease-out md:hidden ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {sidebarContent}
+      </aside>
 
       {/* Main Content */}
-      <div className="flex-1 p-8 overflow-y-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 capitalize">
-            {activeTab === "users"
-              ? "Users"
-              : activeTab === "payments"
-                ? "Pending Purchases"
-                : activeTab === "purchaseHistory"
-                  ? "Completed Purchases"
-                  : `Pending ${activeTab}`}
+      <div className="flex-1 min-w-0 flex flex-col">
+        {/* Mobile top bar */}
+        <header className="md:hidden sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 -ml-1 rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
+            aria-label="Open menu"
+          >
+            <Bars3Icon className="w-6 h-6" />
+          </button>
+          <h2 className="text-base font-bold text-gray-900 truncate flex-1 text-center">
+            {pageTitle}
           </h2>
           <button
+            type="button"
             onClick={fetchData}
             disabled={loading}
-            className="px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 text-sm font-medium text-gray-700 disabled:opacity-50"
+            className="px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 disabled:opacity-50 shrink-0"
           >
-            {loading ? "Refreshing..." : "Refresh"}
+            {loading ? "..." : "Refresh"}
           </button>
-        </div>
+        </header>
+
+        <div className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto">
+          <div className="hidden md:flex justify-between items-center mb-8 gap-4">
+            <h2 className="text-3xl font-bold text-gray-900 capitalize">{pageTitle}</h2>
+            <button
+              type="button"
+              onClick={fetchData}
+              disabled={loading}
+              className="px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 text-sm font-medium text-gray-700 disabled:opacity-50"
+            >
+              {loading ? "Refreshing..." : "Refresh"}
+            </button>
+          </div>
 
         {loading ? (
           <div className="flex justify-center py-12">
@@ -537,9 +726,9 @@ export default function AdminPage() {
           <div className="space-y-4">
             {activeTab === "recharges" && recharges.length === 0 && <p className="text-gray-500">No pending recharges.</p>}
             {activeTab === "recharges" && rechargesPendingPage.items.map((item) => (
-              <div key={item.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
+              <div key={item.id} className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-lg font-bold text-gray-900">{formatCurrency(item.amount)}</p>
                     <StatusBadge status="pending" />
                   </div>
@@ -557,11 +746,11 @@ export default function AdminPage() {
                     </a>
                   </div>
                 )}
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => handleApproveRecharge(item.id, item.userId, item.amount)}
                     disabled={actionLoading !== null}
-                    className="px-4 py-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg font-semibold flex items-center gap-1 transition disabled:opacity-50"
+                    className="flex-1 sm:flex-none px-4 py-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg font-semibold flex items-center justify-center gap-1 transition disabled:opacity-50"
                   >
                     <CheckCircleIcon className="w-5 h-5" />
                     {isActionLoading("approve-recharge", item.id) ? "Processing..." : "Approve"}
@@ -569,7 +758,7 @@ export default function AdminPage() {
                   <button
                     onClick={() => handleRejectRecharge(item.id, item.userId, item.amount)}
                     disabled={actionLoading !== null}
-                    className="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-semibold flex items-center gap-1 transition disabled:opacity-50"
+                    className="flex-1 sm:flex-none px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-semibold flex items-center justify-center gap-1 transition disabled:opacity-50"
                   >
                     <XCircleIcon className="w-5 h-5" />
                     {isActionLoading("reject-recharge", item.id) ? "Processing..." : "Reject"}
@@ -804,29 +993,78 @@ export default function AdminPage() {
               </div>
             )}
 
-            {activeTab === "purchaseHistory" && purchases.length === 0 && (
-              <p className="text-gray-500">No completed purchases yet.</p>
-            )}
-            {activeTab === "purchaseHistory" && purchasesPage.items.map((item) => (
-              <div key={item.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="text-lg font-bold text-gray-900">{item.name}</p>
-                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
-                      Active
-                    </span>
-                  </div>
-                  <p className="text-sm font-medium text-emerald-600">{formatCurrency(item.price)}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {item.ads} ads/day · Daily: {formatCurrency(item.dailyIncome)} · Total: {formatCurrency(item.totalIncome)}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">{formatDate(item, "purchasedAt")}</p>
-                  {renderUserDetails(item.userId)}
+            {activeTab === "purchaseHistory" && (
+              <div className="mb-4">
+                <div className="relative max-w-md">
+                  <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={purchaseSearch}
+                    onChange={(e) => {
+                      setPurchaseSearch(e.target.value);
+                      setPage("purchases", 1);
+                    }}
+                    placeholder="Search by user name, email, phone, or plan..."
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl bg-white text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                  />
                 </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Cancel or expire any user plan. Expired/cancelled plans stop ad earnings and allow repurchase.
+                </p>
               </div>
-            ))}
+            )}
 
-            {activeTab === "purchaseHistory" && purchases.length > 0 && (
+            {activeTab === "purchaseHistory" && filteredPurchases.length === 0 && (
+              <p className="text-gray-500">No purchases found.</p>
+            )}
+            {activeTab === "purchaseHistory" && purchasesPage.items.map((item) => {
+              const status = getPurchaseStatus(item);
+              const canAct = status === "active";
+              return (
+                <div key={item.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="text-lg font-bold text-gray-900">{item.name}</p>
+                      <StatusBadge status={status} />
+                    </div>
+                    <p className="text-sm font-medium text-emerald-600">{formatCurrency(item.price)}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {item.ads} ads/day · Daily: {formatCurrency(item.dailyIncome)} · Total: {formatCurrency(item.totalIncome)}
+                      {item.durationDays ? ` · ${item.durationDays} days` : ""}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Purchased: {formatDate(item, "purchasedAt")}
+                      {item.expiresAt ? ` · Expires: ${formatDate(item, "expiresAt")}` : ""}
+                    </p>
+                    {renderUserDetails(item.userId)}
+                  </div>
+                  {canAct && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() =>
+                          handleUpdatePurchaseStatus(item.id, item.userId, item.name, "expired")
+                        }
+                        disabled={actionLoading !== null}
+                        className="px-4 py-2 bg-orange-50 text-orange-700 hover:bg-orange-100 rounded-lg font-semibold text-sm transition disabled:opacity-50"
+                      >
+                        {isActionLoading("expired-purchase", item.id) ? "..." : "Expire"}
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleUpdatePurchaseStatus(item.id, item.userId, item.name, "cancelled")
+                        }
+                        disabled={actionLoading !== null}
+                        className="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-semibold text-sm transition disabled:opacity-50"
+                      >
+                        {isActionLoading("cancelled-purchase", item.id) ? "..." : "Cancel"}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {activeTab === "purchaseHistory" && filteredPurchases.length > 0 && (
               <Pagination
                 currentPage={purchasesPage.currentPage}
                 totalPages={purchasesPage.totalPages}
@@ -835,6 +1073,97 @@ export default function AdminPage() {
                 rangeEnd={purchasesPage.rangeEnd}
                 onPageChange={(p) => setPage("purchases", p)}
               />
+            )}
+
+            {activeTab === "messages" && (
+              <form onSubmit={handleSendMessage} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 max-w-2xl space-y-4">
+                <p className="text-sm text-gray-500">
+                  Send a message to one user or all users. It will appear in their Notifications tab.
+                </p>
+
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setMsgTarget("user")}
+                    className={`px-4 py-2 rounded-lg text-sm font-semibold border ${msgTarget === "user" ? "bg-emerald-50 border-emerald-300 text-emerald-700" : "bg-white border-gray-200 text-gray-600"}`}
+                  >
+                    Specific User
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMsgTarget("all")}
+                    className={`px-4 py-2 rounded-lg text-sm font-semibold border ${msgTarget === "all" ? "bg-emerald-50 border-emerald-300 text-emerald-700" : "bg-white border-gray-200 text-gray-600"}`}
+                  >
+                    All Users
+                  </button>
+                </div>
+
+                {msgTarget === "user" && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Select User</label>
+                    <select
+                      value={msgUserId}
+                      onChange={(e) => setMsgUserId(e.target.value)}
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-emerald-500"
+                      required
+                    >
+                      <option value="">Choose a user...</option>
+                      {users
+                        .filter((u) => !u.isAdmin)
+                        .map((u) => (
+                          <option key={u.id} value={u.id}>
+                            {u.fullName || "User"} — {u.email || u.phone || u.id.slice(0, 8)}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                  <input
+                    type="text"
+                    value={msgTitle}
+                    onChange={(e) => setMsgTitle(e.target.value)}
+                    placeholder="Notification title"
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-emerald-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                  <textarea
+                    value={msgBody}
+                    onChange={(e) => setMsgBody(e.target.value)}
+                    placeholder="Write your message to the user..."
+                    rows={4}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-emerald-500 resize-y"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                  <select
+                    value={msgType}
+                    onChange={(e) => setMsgType(e.target.value as "success" | "error" | "info")}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-emerald-500"
+                  >
+                    <option value="info">Info</option>
+                    <option value="success">Success</option>
+                    <option value="error">Alert</option>
+                  </select>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={msgSending}
+                  className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition disabled:opacity-50"
+                >
+                  {msgSending ? "Sending..." : msgTarget === "all" ? "Send to All Users" : "Send Message"}
+                </button>
+              </form>
             )}
           </div>
         )}
@@ -889,6 +1218,7 @@ export default function AdminPage() {
             )}
           </div>
         )}
+        </div>
       </div>
     </div>
   );

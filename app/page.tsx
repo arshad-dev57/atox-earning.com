@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
+import { ADS_ENABLED } from "@/lib/ads";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { 
@@ -487,26 +488,27 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Adsterra Banner 468x60 */}
-        <div className="py-12 flex justify-center bg-gray-50">
-          <div className="bg-white rounded-lg p-4 shadow-sm">
-            <Script id="ad-banner-468x60" strategy="afterInteractive">
-              {`
-                atOptions = {
-                  'key' : 'c0886ae1b3dd9ed31af9c5b36c6abf2f',
-                  'format' : 'iframe',
-                  'height' : 60,
-                  'width' : 468,
-                  'params' : {}
-                };
-              `}
-            </Script>
-            <Script
-              src="https://www.highperformanceformat.com/c0886ae1b3dd9ed31af9c5b36c6abf2f/invoke.js"
-              strategy="afterInteractive"
-            />
+        {ADS_ENABLED && (
+          <div className="py-12 flex justify-center bg-gray-50">
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <Script id="ad-banner-468x60" strategy="afterInteractive">
+                {`
+                  atOptions = {
+                    'key' : 'c0886ae1b3dd9ed31af9c5b36c6abf2f',
+                    'format' : 'iframe',
+                    'height' : 60,
+                    'width' : 468,
+                    'params' : {}
+                  };
+                `}
+              </Script>
+              <Script
+                src="https://www.highperformanceformat.com/c0886ae1b3dd9ed31af9c5b36c6abf2f/invoke.js"
+                strategy="afterInteractive"
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Footer */}
         <footer className="bg-gray-900 text-white py-12">

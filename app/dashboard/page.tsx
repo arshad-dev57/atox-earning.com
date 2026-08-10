@@ -21,6 +21,9 @@ import Link from "next/link";
 import Image from "next/image";
 import ImageUpload from "@/components/ImageUpload";
 import Script from "next/script";
+import { ADS_ENABLED, openAdsterraSmartlink } from "@/lib/ads";
+import { PLANS } from "@/lib/plans";
+import { isPurchaseActive } from "@/lib/purchases";
 import {
   HomeIcon,
   ShoppingBagIcon,
@@ -602,10 +605,12 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
     const fetchData = async () => {
       if (!userId) return;
       try {
-        // Fetch purchased plans
+        // Fetch active purchased plans only
         const q = query(collection(db, "purchases"), where("userId", "==", userId));
         const snapshot = await getDocs(q);
-        const purchases = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as any));
+        const purchases = snapshot.docs
+          .map((d) => ({ id: d.id, ...d.data() } as any))
+          .filter(isPurchaseActive);
         setPurchasedProducts(purchases);
 
         // Fetch today's ad progress for each plan
@@ -631,7 +636,7 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
       }
     };
     fetchData();
-  }, [userId]);
+  }, [userId, todayKey]);
 
   const handleRecharge = (amount: number) => { setBalance((prev: number) => prev + amount); };
   const handleWithdraw = (amount: number, type: string) => {
@@ -755,26 +760,27 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
         </button>
       </div>
 
-      {/* Adsterra Banner 160x300 */}
-      <div className="flex justify-center mt-6">
-        <div className="bg-gray-100 rounded-lg p-4">
-          <Script id="ad-banner-160x300" strategy="afterInteractive">
-            {`
-              atOptions = {
-                'key' : 'c0886ae1b3dd9ed31af9c5b36c6abf2f',
-                'format' : 'iframe',
-                'height' : 300,
-                'width' : 160,
-                'params' : {}
-              };
-            `}
-          </Script>
-          <Script
-            src="https://www.highperformanceformat.com/c0886ae1b3dd9ed31af9c5b36c6abf2f/invoke.js"
-            strategy="afterInteractive"
-          />
+      {ADS_ENABLED && (
+        <div className="flex justify-center mt-6">
+          <div className="bg-gray-100 rounded-lg p-4">
+            <Script id="ad-banner-160x300" strategy="afterInteractive">
+              {`
+                atOptions = {
+                  'key' : 'c0886ae1b3dd9ed31af9c5b36c6abf2f',
+                  'format' : 'iframe',
+                  'height' : 300,
+                  'width' : 160,
+                  'params' : {}
+                };
+              `}
+            </Script>
+            <Script
+              src="https://www.highperformanceformat.com/c0886ae1b3dd9ed31af9c5b36c6abf2f/invoke.js"
+              strategy="afterInteractive"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Withdraw Info Banner */}
       <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-2xl p-5">
@@ -853,7 +859,10 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
 
                   {/* Watch Ad Button */}
                   <button
-                    onClick={() => router.push(`/plan/${product.productId}`)}
+                    onClick={() => {
+                      openAdsterraSmartlink();
+                      router.push(`/plan/${product.productId}`);
+                    }}
                     className={`w-full py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${isDone
                       ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
                       : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/30 active:scale-95"
@@ -896,7 +905,9 @@ const TasksTab = ({ userId }: { userId: string | null }) => {
       try {
         const q = query(collection(db, "purchases"), where("userId", "==", userId));
         const snapshot = await getDocs(q);
-        const purchases = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as any));
+        const purchases = snapshot.docs
+          .map((d) => ({ id: d.id, ...d.data() } as any))
+          .filter(isPurchaseActive);
         setPurchasedProducts(purchases);
 
         const progressMap: Record<string, number> = {};
@@ -913,7 +924,7 @@ const TasksTab = ({ userId }: { userId: string | null }) => {
       }
     };
     fetchData();
-  }, [userId]);
+  }, [userId, todayKey]);
 
   return (
     <div className="p-6 pb-24 lg:pb-6 space-y-6 bg-gradient-to-br from-gray-50 via-white to-blue-50/30 min-h-screen">
@@ -1011,7 +1022,10 @@ const TasksTab = ({ userId }: { userId: string | null }) => {
 
                 {/* CTA Button */}
                 <button
-                  onClick={() => router.push(`/plan/${product.productId}`)}
+                  onClick={() => {
+                    openAdsterraSmartlink();
+                    router.push(`/plan/${product.productId}`);
+                  }}
                   className={`w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 active:scale-95 ${isDone
                     ? "bg-gray-100 text-gray-500 cursor-default"
                     : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/30"
@@ -1163,35 +1177,7 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
   const [submitting, setSubmitting] = useState(false);
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const products = [
-    { id: "vip1", name: "VIP 1", ads: 20, price: 3000, term: "30 days", dailyIncome: 750, totalIncome: 22500, color: "from-emerald-500 to-green-600", badge: "Starter" },
-    { id: "vip2", name: "VIP 2", ads: 15, price: 7000, term: "30 days", dailyIncome: 1700, totalIncome: 51000, color: "from-blue-500 to-indigo-600", badge: "Basic" },
-    { id: "vip3", name: "VIP 3", ads: 15, price: 15000, term: "30 days", dailyIncome: 3000, totalIncome: 90000, color: "from-purple-500 to-pink-600", badge: "Standard" },
-    { id: "vip4", name: "VIP 4", ads: 15, price: 35000, term: "30 days", dailyIncome: 9000, totalIncome: 270000, color: "from-orange-500 to-red-600", badge: "Advanced" },
-    { id: "vip5", name: "VIP 5", ads: 15, price: 75000, term: "30 days", dailyIncome: 15000, totalIncome: 150000, color: "from-rose-500 to-pink-700", badge: "Premium" },
-    { id: "vip6", name: "VIP 6", ads: 15, price: 100000, term: "30 days", dailyIncome: 25000, totalIncome: 300000, color: "from-yellow-500 to-amber-600", badge: "Elite" },
-    {
-      id: "vip7",
-      name: "VIP 7",
-      ads: 20,
-      price: 500000,
-      term: "30 days",
-      dailyIncome: 25000,
-      totalIncome: 750000,
-      color: "from-yellow-500 to-amber-600",
-      badge: "Elite",
-    }, {
-      id: "vip8",
-      name: "VIP 8",
-      ads: 20,
-      price: 1000000,
-      term: "30 days",
-      dailyIncome: 43333.33,
-      totalIncome: 1300000,
-      color: "from-yellow-500 to-amber-600",
-      badge: "Elite",
-    }
-  ];
+  const products = PLANS;
   // Bank details
   const bankDetails = {
     bankName: "Opay",
@@ -1243,7 +1229,8 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
         where("productId", "==", product.id)
       );
       const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
+      const hasActive = snapshot.docs.some((d) => isPurchaseActive(d.data()));
+      if (hasActive) {
         alert("You already have an active subscription for this plan! You cannot purchase it again until your current plan expires.");
         return;
       }
@@ -1371,7 +1358,7 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Duration</span>
-                  <span className="font-medium text-gray-700">30 days</span>
+                  <span className="font-medium text-gray-700">{product.term}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Daily Income</span>
@@ -1559,7 +1546,7 @@ const TeamTab = ({ userId }: { userId: string | null }) => {
             </div>
             <div>
               <p className="text-sm text-gray-500">Level 1 Commission</p>
-              <p className="text-2xl font-bold text-gray-900">20%</p>
+              <p className="text-2xl font-bold text-gray-900">10%</p>
             </div>
           </div>
         </div>
@@ -1580,8 +1567,10 @@ const TeamTab = ({ userId }: { userId: string | null }) => {
       <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-200 mb-6">
         <div className="flex flex-col gap-3">
           <div>
-            <p className="font-semibold text-gray-900 text-lg">🎁 Your Referral Code</p>
-            <p className="text-sm text-gray-600 mt-1">Share this code with friends. When they register and enter your code, you earn <strong>10%</strong> of their first product purchase!</p>
+            <p className="font-semibold text-gray-900 text-lg">Your Referral Code</p>
+            <p className="text-sm text-gray-600 mt-1">
+              Share this code or link. When they register with it, you earn <strong>10%</strong> of their first purchase (level 2 gets <strong>3%</strong>).
+            </p>
           </div>
           <div className="flex gap-2 items-center">
             <div className="flex-1 px-5 py-3 border-2 border-emerald-300 rounded-xl bg-white text-lg font-bold text-emerald-700 tracking-widest text-center select-all">
@@ -1595,7 +1584,22 @@ const TeamTab = ({ userId }: { userId: string | null }) => {
               Copy Code
             </button>
           </div>
-          <p className="text-xs text-gray-500">💡 Ask your friend to enter this code in the <strong>"Invitation Code"</strong> field on the Register page.</p>
+          {referralCode && (
+            <button
+              type="button"
+              onClick={() => {
+                const link = `${window.location.origin}/register?ref=${referralCode}`;
+                navigator.clipboard.writeText(link);
+                alert("Invite link copied!");
+              }}
+              className="w-full px-4 py-2.5 border-2 border-emerald-300 text-emerald-700 rounded-xl font-semibold hover:bg-emerald-50 transition text-sm"
+            >
+              Copy Invite Link
+            </button>
+          )}
+          <p className="text-xs text-gray-500">
+            Friends can enter this code on Register, or open your invite link directly.
+          </p>
         </div>
       </div>
 
@@ -2132,14 +2136,23 @@ export default function Dashboard() {
         if (userSnap.exists()) {
           setUserData(userSnap.data());
         } else {
+          const myInvitationCode = `ATOX-${user.uid.slice(0, 6).toUpperCase()}`;
           await setDoc(userRef, {
             email: user.email,
             balance: 0,
+            referralBalance: 0,
             totalEarned: 0,
             referredBy: null,
+            myInvitationCode,
+            referralBonusPaid: false,
+            referralCount: 0,
             createdAt: serverTimestamp(),
           });
-          setUserData({ email: user.email || "", balance: 0, totalEarned: 0 });
+          setUserData({
+            email: user.email || "",
+            balance: 0,
+            totalEarned: 0,
+          });
         }
       } catch (error) {
         console.error("Error fetching user data:", error);

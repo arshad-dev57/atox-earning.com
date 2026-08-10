@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useRouter, useParams } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
@@ -24,6 +24,10 @@ import {
   PlayIcon,
   TrophyIcon,
 } from "@heroicons/react/24/outline";
+import { getPlan } from "@/lib/plans";
+import { isPurchaseActive } from "@/lib/purchases";
+import { AD_VIDEO_MODE } from "@/lib/ads";
+import PlanVideoAd from "@/components/PlanVideoAd";
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("en-NG", {
@@ -31,13 +35,6 @@ const formatCurrency = (amount: number) =>
     currency: "NGN",
     minimumFractionDigits: 0,
   }).format(amount);
-
-// Product definitions — must match dashboard
-const PRODUCTS: Record<string, { id: string; name: string; ads: number; dailyIncome: number; totalIncome: number; color: string }> = {
-  vip1: { id: "vip1", name: "VIP 1", ads: 20, dailyIncome: 750, totalIncome: 22000, color: "from-emerald-500 to-green-600" },
-  vip2: { id: "vip2", name: "VIP 2", ads: 35, dailyIncome: 1200, totalIncome: 36000, color: "from-blue-500 to-indigo-600" },
-  vip3: { id: "vip3", name: "VIP 3", ads: 50, dailyIncome: 2200, totalIncome: 66000, color: "from-purple-500 to-pink-600" },
-};
 
 export default function PlanDetailPage() {
   const router = useRouter();
@@ -52,14 +49,13 @@ export default function PlanDetailPage() {
 
   // Ad player state
   const [playingAd, setPlayingAd] = useState<number | null>(null); // slot number (1-based)
-  const [adTimer, setAdTimer] = useState(30);
   const [adCompleted, setAdCompleted] = useState(false);
+  const [adError, setAdError] = useState<string | null>(null);
   const [claiming, setClaiming] = useState(false);
-  const timerRef = useRef<any>(null);
 
   const todayKey = new Date().toISOString().split("T")[0];
 
-  const product = PRODUCTS[productId];
+  const product = getPlan(productId);
 
   // Auth check
   useEffect(() => {
@@ -75,15 +71,18 @@ export default function PlanDetailPage() {
     if (!userId || !product) return;
     const fetchData = async () => {
       try {
-        // Get purchase doc
+        // Get active purchase doc
         const q = query(
           collection(db, "purchases"),
           where("userId", "==", userId),
           where("productId", "==", productId)
         );
         const snap = await getDocs(q);
-        if (!snap.empty) {
-          setPurchase({ id: snap.docs[0].id, ...snap.docs[0].data() });
+        const active = snap.docs
+          .map((d) => ({ id: d.id, ...d.data() } as any))
+          .find((p) => isPurchaseActive(p));
+        if (active) {
+          setPurchase(active);
         }
 
         // Get today's ad progress
@@ -100,34 +99,18 @@ export default function PlanDetailPage() {
     fetchData();
   }, [userId, productId, todayKey, product]);
 
-  // Cleanup timer
-  useEffect(() => {
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, []);
-
   const startAd = (slotIndex: number) => {
     // slotIndex is 1-based; only allow the next unwatched
     if (slotIndex !== adsWatched + 1) return;
     if (adsWatched >= (product?.ads || 0)) return;
 
     setPlayingAd(slotIndex);
-    setAdTimer(30);
     setAdCompleted(false);
-
-    timerRef.current = setInterval(() => {
-      setAdTimer((prev) => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current);
-          setAdCompleted(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    setAdError(null);
   };
 
   const claimReward = async () => {
-    if (!userId || !product || claiming) return;
+    if (!userId || !product || claiming || !adCompleted) return;
     setClaiming(true);
     try {
       const newWatched = adsWatched + 1;
@@ -152,6 +135,7 @@ export default function PlanDetailPage() {
       setTodayEarned((prev) => prev + earningPerAd);
       setPlayingAd(null);
       setAdCompleted(false);
+      setAdError(null);
     } catch (err) {
       console.error("Error claiming reward:", err);
       toast.error("Failed to claim reward. Please try again.");
@@ -161,10 +145,9 @@ export default function PlanDetailPage() {
   };
 
   const closePlayer = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
     setPlayingAd(null);
-    setAdTimer(30);
     setAdCompleted(false);
+    setAdError(null);
   };
 
   if (!product) {
@@ -202,47 +185,56 @@ export default function PlanDetailPage() {
               )}
             </div>
 
-            {/* Video Area */}
-            <div className="relative bg-black" style={{ paddingTop: "56.25%" }}>
-              {/* Replace this iframe src with your actual ad network embed URL */}
-              <iframe
-                className="absolute inset-0 w-full h-full"
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&controls=0&disablekb=1&fs=0&rel=0&modestbranding=1"
-                allow="autoplay; encrypted-media"
-                allowFullScreen={false}
-                title={`Ad ${playingAd}`}
-              />
-              {/* Overlay to block controls until done */}
-              {!adCompleted && (
-                <div className="absolute inset-0 bg-transparent cursor-not-allowed" />
-              )}
-              {/* Timer badge */}
-              {!adCompleted && (
-                <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                  <span className="text-white text-sm font-bold">{adTimer}s</span>
-                </div>
-              )}
-              {/* Completed overlay */}
-              {adCompleted && (
-                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-emerald-500/40">
-                      <CheckCircleIcon className="w-9 h-9 text-white" />
+            {/* Video Area — static for now, Adsterra VAST when mode=vast */}
+            <div className="relative bg-black overflow-hidden" style={{ paddingTop: "56.25%" }}>
+              <div className="absolute inset-0">
+                {!adCompleted && !adError && (
+                  <PlanVideoAd
+                    slotKey={playingAd}
+                    onCompleted={() => {
+                      setAdCompleted(true);
+                      setAdError(null);
+                    }}
+                    onError={(message) => {
+                      setAdError(message);
+                      setAdCompleted(false);
+                      toast.error(message);
+                    }}
+                  />
+                )}
+                {adCompleted && (
+                  <div className="absolute inset-0 bg-black/70 flex items-center justify-center z-10">
+                    <div className="text-center">
+                      <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-emerald-500/40">
+                        <CheckCircleIcon className="w-9 h-9 text-white" />
+                      </div>
+                      <p className="text-white font-bold text-lg">Ad Complete!</p>
+                      <p className="text-emerald-400 text-sm">Claim your reward below</p>
                     </div>
-                    <p className="text-white font-bold text-lg">Ad Complete!</p>
-                    <p className="text-emerald-400 text-sm">Claim your reward below</p>
                   </div>
-                </div>
-              )}
-            </div>
-
-            {/* Progress bar */}
-            <div className="h-1 bg-gray-700">
-              <div
-                className="h-1 bg-emerald-500 transition-all duration-1000"
-                style={{ width: `${((30 - adTimer) / 30) * 100}%` }}
-              />
+                )}
+                {adError && !adCompleted && (
+                  <div className="absolute inset-0 bg-black flex items-center justify-center p-6 text-center z-10">
+                    <div>
+                      <p className="text-red-400 font-semibold mb-2">Ad did not complete</p>
+                      <p className="text-gray-400 text-sm mb-4">{adError}</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAdError(null);
+                          setAdCompleted(false);
+                          const slot = playingAd;
+                          setPlayingAd(null);
+                          requestAnimationFrame(() => setPlayingAd(slot));
+                        }}
+                        className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold"
+                      >
+                        Try Again
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Action */}
@@ -263,12 +255,11 @@ export default function PlanDetailPage() {
                   )}
                 </button>
               ) : (
-                <div className="flex items-center justify-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-white/10 border-2 border-emerald-500 flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">{adTimer}</span>
-                  </div>
-                  <p className="text-gray-400 text-sm">Watch the full ad to claim your reward</p>
-                </div>
+                <p className="text-center text-gray-400 text-sm">
+                  {AD_VIDEO_MODE === "vast"
+                    ? "Watch the full Adsterra video ad to unlock your reward"
+                    : "Watch the full video to unlock your reward"}
+                </p>
               )}
             </div>
           </div>
