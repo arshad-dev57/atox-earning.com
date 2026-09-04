@@ -517,6 +517,7 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
                   <p className="text-xs text-red-600">Task withdrawals are only available every <strong>Friday from 8:00 AM to 8:00 PM</strong> (Nigerian Time). You can still withdraw your Referral Balance now.</p>
                 </div>
               </div>
+              
             )}
 
             <label className="block text-sm font-semibold text-gray-700 mb-1.5">
