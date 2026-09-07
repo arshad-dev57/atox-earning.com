@@ -1,5 +1,9 @@
-/** Set NEXT_PUBLIC_ADS_ENABLED=true in .env.local to turn ads on. */
-export const ADS_ENABLED = process.env.NEXT_PUBLIC_ADS_ENABLED === "true";
+/**
+ * Ads are ON unless explicitly disabled.
+ * Local/Vercel: set NEXT_PUBLIC_ADS_ENABLED=false to turn off.
+ * (Unset or "true" = enabled — so Vercel works even if the var is missing.)
+ */
+export const ADS_ENABLED = process.env.NEXT_PUBLIC_ADS_ENABLED !== "false";
 
 /** Adsterra Smartlink (Direct Link) ID */
 export const ADSTERRA_SMARTLINK_ID = "30356717";
