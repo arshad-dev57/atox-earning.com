@@ -42,7 +42,9 @@ import {
   ListBulletIcon,
   ChatBubbleLeftRightIcon,
   DevicePhoneMobileIcon,
+  PlayIcon,
 } from "@heroicons/react/24/outline";
+import { FREE_MODE_EARNING_PER_AD } from "@/lib/free-mode";
 
 // Helper to format currency
 const formatCurrency = (amount: number) => {
@@ -54,11 +56,20 @@ const formatCurrency = (amount: number) => {
 };
 
 // --- Sidebar Component ---
-const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab: (tab: string) => void }) => {
+const Sidebar = ({
+  activeTab,
+  setActiveTab,
+  showFreeMode,
+}: {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+  showFreeMode: boolean;
+}) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const menuItems = [
     { id: "home", label: "Home", icon: HomeIcon },
+    ...(showFreeMode ? [{ id: "freemode", label: "Free Mode", icon: PlayIcon }] : []),
     { id: "tasks", label: "Tasks", icon: ListBulletIcon },
     { id: "products", label: "Products", icon: ShoppingBagIcon },
     { id: "team", label: "Team", icon: UsersIcon },
@@ -68,10 +79,12 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
     { id: "profile", label: "Profile", icon: UserIcon },
   ];
 
-  // Mobile bottom nav - only show 4 main items
+  // Mobile bottom nav - Free Mode replaces Tasks when user has no VIP plan
   const mobileMenuItems = [
     { id: "home", label: "Home", icon: HomeIcon },
-    { id: "tasks", label: "Tasks", icon: ListBulletIcon },
+    showFreeMode
+      ? { id: "freemode", label: "Free Mode", icon: PlayIcon }
+      : { id: "tasks", label: "Tasks", icon: ListBulletIcon },
     { id: "products", label: "Products", icon: ShoppingBagIcon },
     { id: "profile", label: "Profile", icon: UserIcon },
   ];
@@ -814,7 +827,17 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
               <ShoppingBagIcon className="w-10 h-10 text-gray-400" />
             </div>
             <p className="text-gray-500 font-medium">No products purchased yet</p>
-            <p className="text-sm text-gray-400 mt-1">Visit the Products page to buy packages and start earning</p>
+            <p className="text-sm text-gray-400 mt-1 mb-4">
+              Use Free Mode to earn {formatCurrency(FREE_MODE_EARNING_PER_AD)} per ad, or buy a VIP plan
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <button
+                onClick={() => router.push("/free-mode")}
+                className="px-5 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold text-sm hover:shadow-lg transition"
+              >
+                Open Free Mode
+              </button>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -944,8 +967,16 @@ const TasksTab = ({ userId }: { userId: string | null }) => {
             <ListBulletIcon className="w-12 h-12 text-blue-500" />
           </div>
           <h3 className="text-xl font-bold text-gray-800 mb-2">No Active Tasks</h3>
-          <p className="text-gray-500 mb-6">You haven't purchased any plans yet.<br />Buy a plan to unlock your daily ad tasks.</p>
-          <p className="text-sm text-blue-600 font-semibold">Go to Products → Buy a Plan to get started!</p>
+          <p className="text-gray-500 mb-4">
+            You haven&apos;t purchased any plans yet.<br />
+            Use Free Mode to earn {formatCurrency(FREE_MODE_EARNING_PER_AD)} per ad, or buy a VIP plan.
+          </p>
+          <button
+            onClick={() => router.push("/free-mode")}
+            className="px-5 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold text-sm hover:shadow-lg transition"
+          >
+            Open Free Mode
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -1643,8 +1674,6 @@ const TeamTab = ({ userId }: { userId: string | null }) => {
     </div>
   );
 };
-
-// --- Notifications Tab ---
 const NotificationsTab = ({ userId }: { userId: string | null }) => {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1662,7 +1691,6 @@ const NotificationsTab = ({ userId }: { userId: string | null }) => {
           id: doc.id,
           ...doc.data(),
         }));
-        // Sort by createdAt descending locally since we don't have a composite index set up yet
         notifs.sort((a: any, b: any) => {
           const timeA = a.createdAt?.toMillis?.() || 0;
           const timeB = b.createdAt?.toMillis?.() || 0;
@@ -1726,8 +1754,6 @@ const NotificationsTab = ({ userId }: { userId: string | null }) => {
     </div>
   );
 };
-
-// --- Profile Tab ---
 const ProfileTab = ({ userData, userId }: { userData: { email?: string; balance?: number; totalEarned?: number } | null; userId: string | null }) => {
   const [withdrawHistory, setWithdrawHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1900,14 +1926,13 @@ const VTUTab = ({ userId }: { userId: string | null }) => {
     50: { displayPrice: 2150, apiPrice: 2300 },  // 5GB SME
     53: { displayPrice: 2595, apiPrice: 2600 },  // 6GB Gifting
     55: { displayPrice: 3530, apiPrice: 3450 },  // 11GB Gifting
-    33: { displayPrice: 3599, apiPrice: 3599 },  // 7GB Gifting
-    67: { displayPrice: 4570, apiPrice: 5000 },  // 10GB Gifting
-    57: { displayPrice: 11800, apiPrice: 11000 }, // 36GB Gifting
-    51: { displayPrice: 18990, apiPrice: 18500 }, // 75GB SME
+    33: { displayPrice: 3599, apiPrice: 3599 },  
+    67: { displayPrice: 4570, apiPrice: 5000 },  
+    57: { displayPrice: 11800, apiPrice: 11000 },
+    51: { displayPrice: 18990, apiPrice: 18500 }, 
   };
 
   const dataPlans = [
-    // MTN
     { id: 43, providerId: 1, name: "110MB Gifting", price: customPriceMapping[43]?.displayPrice || 100, apiPrice: customPriceMapping[43]?.apiPrice || 100 },
     { id: 74, providerId: 1, name: "230MB Gifting", price: customPriceMapping[74]?.displayPrice || 300, apiPrice: customPriceMapping[74]?.apiPrice || 250 },
     { id: 76, providerId: 1, name: "500MB SME", price: customPriceMapping[76]?.displayPrice || 500, apiPrice: customPriceMapping[76]?.apiPrice || 270 },
@@ -1932,8 +1957,6 @@ const VTUTab = ({ userId }: { userId: string | null }) => {
     { id: 67, providerId: 1, name: "10GB Gifting", price: customPriceMapping[67]?.displayPrice || 4570, apiPrice: customPriceMapping[67]?.apiPrice || 5000 },
     { id: 57, providerId: 1, name: "36GB Gifting", price: customPriceMapping[57]?.displayPrice || 11800, apiPrice: customPriceMapping[57]?.apiPrice || 11000 },
     { id: 51, providerId: 1, name: "75GB SME", price: customPriceMapping[51]?.displayPrice || 18990, apiPrice: customPriceMapping[51]?.apiPrice || 18500 },
-
-    // Glo - Using original prices (no custom mapping yet)
     { id: 42, providerId: 2, name: "Glo 200 MB - 1 Day", price: 100, apiPrice: 100 },
     { id: 35, providerId: 2, name: "Glo 500MB - 30 Days", price: 250, apiPrice: 250 },
     { id: 68, providerId: 2, name: "Glo 1GB - 3 Days", price: 350, apiPrice: 350 },
@@ -2116,12 +2139,56 @@ const VTUTab = ({ userId }: { userId: string | null }) => {
     </div>
   );
 };
+const FreeModeTab = ({ setActiveTab }: { setActiveTab: (tab: string) => void }) => {
+  const router = useRouter();
+
+  return (
+    <div className="p-6 pb-24 lg:pb-6 space-y-6 bg-gradient-to-br from-gray-50 via-white to-teal-50/30 min-h-screen">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Free Mode</h1>
+        <p className="text-gray-500 mt-1">
+          No VIP plan yet? Watch unlimited ads and earn {formatCurrency(FREE_MODE_EARNING_PER_AD)} each
+        </p>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 max-w-xl">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center mb-4 shadow-lg shadow-teal-500/25">
+          <PlayIcon className="w-7 h-7 text-white" />
+        </div>
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Earn without buying a plan</h2>
+        <ul className="text-sm text-gray-600 space-y-2 mb-6">
+          <li>Tap watch — an ad opens first</li>
+          <li>Then watch the video fully</li>
+          <li>Claim {formatCurrency(FREE_MODE_EARNING_PER_AD)} per video — unlimited</li>
+          <li>1,000 ads ≈ {formatCurrency(1000 * FREE_MODE_EARNING_PER_AD)}</li>
+        </ul>
+
+        <button
+          onClick={() => router.push("/free-mode")}
+          className="w-full py-3.5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-bold hover:shadow-lg hover:shadow-teal-500/30 transition-all flex items-center justify-center gap-2"
+        >
+          <PlayIcon className="w-5 h-5" />
+          Start Free Mode
+        </button>
+
+        <button
+          onClick={() => setActiveTab("products")}
+          className="w-full mt-3 py-3 rounded-xl border-2 border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition"
+        >
+          Or buy a VIP plan
+        </button>
+      </div>
+    </div>
+  );
+};
+
 // --- Main Dashboard Component ---
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("home");
   const [userData, setUserData] = useState<{ email?: string; balance?: number; totalEarned?: number } | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hasActivePlan, setHasActivePlan] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -2155,6 +2222,13 @@ export default function Dashboard() {
             totalEarned: 0,
           });
         }
+
+        const purchasesQ = query(collection(db, "purchases"), where("userId", "==", user.uid));
+        const purchasesSnap = await getDocs(purchasesQ);
+        const active = purchasesSnap.docs
+          .map((d) => ({ id: d.id, ...d.data() } as any))
+          .some((p) => isPurchaseActive(p));
+        setHasActivePlan(active);
       } catch (error) {
         console.error("Error fetching user data:", error);
       } finally {
@@ -2164,6 +2238,12 @@ export default function Dashboard() {
 
     return () => unsubscribe();
   }, [router]);
+
+  useEffect(() => {
+    if (hasActivePlan && activeTab === "freemode") {
+      setActiveTab("home");
+    }
+  }, [hasActivePlan, activeTab]);
 
   if (loading) {
     return (
@@ -2176,12 +2256,17 @@ export default function Dashboard() {
     );
   }
 
+  const showFreeMode = !hasActivePlan;
+
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} showFreeMode={showFreeMode} />
       <div className="flex-1 overflow-y-auto">
         {activeTab === "home" && (
           <HomeTab userData={userData} userId={userId} />
+        )}
+        {activeTab === "freemode" && showFreeMode && (
+          <FreeModeTab setActiveTab={setActiveTab} />
         )}
         {activeTab === "tasks" && <TasksTab userId={userId} />}
         {activeTab === "products" && <ProductsTab userId={userId} />}
