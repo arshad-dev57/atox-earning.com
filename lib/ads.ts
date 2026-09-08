@@ -5,6 +5,10 @@
  */
 export const ADS_ENABLED = process.env.NEXT_PUBLIC_ADS_ENABLED !== "false";
 
+/** Google AdSense publisher ID (ca-pub-…) — used for site verification + Auto ads */
+export const ADSENSE_CLIENT_ID = "ca-pub-1369779382804350";
+export const ADSENSE_PUBLISHER_ID = "pub-1369779382804350";
+
 /** Adsterra Smartlink (Direct Link) ID */
 export const ADSTERRA_SMARTLINK_ID = "30356717";
 export const ADSTERRA_SMARTLINK_URL = `https://otieu.com/4/${ADSTERRA_SMARTLINK_ID}`;

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import Script from "next/script";
-import { ADS_ENABLED } from "@/lib/ads";
+import { ADS_ENABLED, ADSENSE_CLIENT_ID } from "@/lib/ads";
 import AdsterraSmartlink from "@/components/AdsterraSmartlink";
 import "./globals.css";
 
@@ -19,6 +19,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ATOX Investment Platform",
   description: "A modern digital investment platform for secure, transparent, and accessible investment opportunities.",
+  other: {
+    "google-adsense-account": ADSENSE_CLIENT_ID,
+  },
 };
 
 export default function RootLayout({
@@ -32,6 +35,14 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        {/* Google AdSense — always present so Google can verify the live site */}
+        <Script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
         {children}
         <Toaster position="top-center" />
         <AdsterraSmartlink />
