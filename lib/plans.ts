@@ -64,7 +64,7 @@ export const PLANS: Plan[] = [
     id: "vip5",
     name: "VIP 5",
     ads: 15,
-    price: 75000,
+    price: 100000,
     term: "30 days",
     durationDays: 30,
     dailyIncome: 15000,
