@@ -756,7 +756,6 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
         </div>
       </div>
 
-      {/* Action Buttons */}
       <div className="flex flex-wrap gap-3">
         <button
           onClick={() => setShowRecharge(true)}
