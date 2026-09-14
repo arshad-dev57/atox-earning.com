@@ -34,15 +34,15 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        {/* Google AdSense — always present so Google can verify the live site */}
-        <Script
+      <head>
+        {/* Google AdSense — must be in <head> for site-ready checks */}
+        <script
           async
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
           crossOrigin="anonymous"
-          strategy="afterInteractive"
         />
-
+      </head>
+      <body className="min-h-full flex flex-col">
         {children}
         <Toaster position="top-center" />
         <AdsterraSmartlink />
