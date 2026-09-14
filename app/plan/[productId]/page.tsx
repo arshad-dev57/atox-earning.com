@@ -47,7 +47,6 @@ export default function PlanDetailPage() {
   const [todayEarned, setTodayEarned] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Ad player state
   const [playingAd, setPlayingAd] = useState<number | null>(null); // slot number (1-based)
   const [adCompleted, setAdCompleted] = useState(false);
   const [adError, setAdError] = useState<string | null>(null);
@@ -57,7 +56,6 @@ export default function PlanDetailPage() {
 
   const product = getPlan(productId);
 
-  // Auth check
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) { router.push("/login"); return; }
@@ -66,12 +64,10 @@ export default function PlanDetailPage() {
     return () => unsub();
   }, [router]);
 
-  // Fetch purchase + progress
   useEffect(() => {
     if (!userId || !product) return;
     const fetchData = async () => {
       try {
-        // Get active purchase doc
         const q = query(
           collection(db, "purchases"),
           where("userId", "==", userId),
@@ -85,7 +81,6 @@ export default function PlanDetailPage() {
           setPurchase(active);
         }
 
-        // Get today's ad progress
         const progressRef = doc(db, "adProgress", `${userId}_${productId}_${todayKey}`);
         const progressDoc = await getDoc(progressRef);
         if (progressDoc.exists()) {
@@ -100,7 +95,6 @@ export default function PlanDetailPage() {
   }, [userId, productId, todayKey, product]);
 
   const startAd = (slotIndex: number) => {
-    // slotIndex is 1-based; only allow the next unwatched
     if (slotIndex !== adsWatched + 1) return;
     if (adsWatched >= (product?.ads || 0)) return;
 

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import AdSenseUnit from "@/components/AdSenseUnit";
 import { ArrowLeftIcon, ShieldCheckIcon, LightBulbIcon, UserGroupIcon, ChartBarIcon, ScaleIcon } from "@heroicons/react/24/outline";
 
 export default function AboutPage() {
@@ -80,6 +81,8 @@ export default function AboutPage() {
           </p>
         </section>
 
+        <AdSenseUnit variant="display" className="mb-16" />
+
         {/* Card Intro */}
         <section className="mb-16">
           <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
@@ -112,6 +115,8 @@ export default function AboutPage() {
           </div>
         </section>
 
+        <AdSenseUnit variant="article" className="mb-16" />
+
         {/* Why Choose Us */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-center mb-10 text-gray-900">Why Choose ATOX?</h2>
@@ -132,6 +137,8 @@ export default function AboutPage() {
           </div>
         </section>
 
+        <AdSenseUnit variant="feed" className="mb-16" />
+
         {/* Core Values */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">Our Core Values</h2>
@@ -150,6 +157,8 @@ export default function AboutPage() {
             })}
           </div>
         </section>
+
+        <AdSenseUnit variant="multiplex" className="mb-16" />
 
         {/* Our Commitment & Join Call-to-Action */}
         <section>

@@ -9,6 +9,15 @@ export const ADS_ENABLED = process.env.NEXT_PUBLIC_ADS_ENABLED !== "false";
 export const ADSENSE_CLIENT_ID = "ca-pub-1369779382804350";
 export const ADSENSE_PUBLISHER_ID = "pub-1369779382804350";
 
+export const ADSENSE_SLOTS = {
+  display: "1224718181",
+  feed: "5262009429",
+  article: "1528357558",
+  multiplex: "3216456709",
+} as const;
+
+export const ADSENSE_FEED_LAYOUT_KEY = "-fb+5w+4e-db+86";
+
 /** Adsterra Smartlink (Direct Link) ID */
 export const ADSTERRA_SMARTLINK_ID = "30356717";
 export const ADSTERRA_SMARTLINK_URL = `https://otieu.com/4/${ADSTERRA_SMARTLINK_ID}`;

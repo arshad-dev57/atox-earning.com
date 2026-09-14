@@ -20,6 +20,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import ImageUpload from "@/components/ImageUpload";
+import AdSenseUnit from "@/components/AdSenseUnit";
 import Script from "next/script";
 import { ADS_ENABLED, openAdsterraSmartlink } from "@/lib/ads";
 import { PLANS } from "@/lib/plans";
@@ -910,6 +911,8 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
           </div>
         )}
       </div>
+
+      <AdSenseUnit variant="display" />
     </div>
   );
 };
@@ -1199,8 +1202,6 @@ const CustomerCareTab = () => {
     </div>
   );
 };
-
-// --- Products Tab ---
 const ProductsTab = ({ userId }: { userId: string | null }) => {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -1244,15 +1245,11 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
       alert("Please login first");
       return;
     }
-
-    // 1. Check if they already have a pending payment for this plan
     const hasPending = payments.some(p => p.productId === product.id && p.status === "pending");
     if (hasPending) {
       alert("You already have a pending payment for this plan. Please wait for admin approval.");
       return;
     }
-
-    // 2. Check if they already own this plan (active purchase)
     try {
       const q = query(
         collection(db, "purchases"),
@@ -1301,7 +1298,6 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
       setSelectedProduct(null);
       setPaymentScreenshot("");
 
-      // Refresh payments
       const q = query(collection(db, "payments"), where("userId", "==", userId));
       const snapshot = await getDocs(q);
       setPayments(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
@@ -1319,8 +1315,6 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
         <h1 className="text-3xl font-bold text-gray-900">Investment Plans</h1>
         <p className="text-gray-500 mt-1">Choose a plan that fits your goals</p>
       </div>
-
-      {/* Payment History */}
       {!loading && payments.length > 0 && (
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 mb-6">
           <h3 className="text-lg font-bold text-gray-900 mb-4">Payment History</h3>
@@ -1358,6 +1352,8 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
           </div>
         </div>
       )}
+
+      <AdSenseUnit variant="feed" className="mb-6" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
@@ -1415,6 +1411,8 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
           </div>
         ))}
       </div>
+
+      <AdSenseUnit variant="multiplex" className="mt-6" />
 
       {/* Payment Modal */}
       {showPaymentModal && selectedProduct && (
@@ -1787,7 +1785,6 @@ const ProfileTab = ({ userData, userId }: { userData: { email?: string; balance?
         <p className="text-gray-500 mt-1">Manage your account settings</p>
       </div>
 
-      {/* Profile Card */}
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 mb-6">
         <div className="flex items-center gap-6">
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center text-3xl text-white shadow-lg shadow-emerald-500/30">

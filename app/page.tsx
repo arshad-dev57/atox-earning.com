@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
 import { ADS_ENABLED } from "@/lib/ads";
+import AdSenseUnit from "@/components/AdSenseUnit";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { 
@@ -121,6 +122,10 @@ export default function Home() {
           </div>
         </section>
 
+        <div className="max-w-7xl mx-auto px-6 pb-8">
+          <AdSenseUnit variant="display" />
+        </div>
+
         {/* Features Section */}
         <section id="features" className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-6">
@@ -155,6 +160,10 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <AdSenseUnit variant="feed" />
+        </div>
 
         {/* Data & Airtime Section */}
         <section id="data-airtime" className="py-20 bg-gradient-to-br from-gray-50 to-emerald-50">
@@ -290,6 +299,10 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <div className="max-w-3xl mx-auto px-6 py-8">
+          <AdSenseUnit variant="article" />
+        </div>
 
         {/* Testimonials Section */}
         <section id="testimonials" className="py-20 bg-white">
@@ -485,6 +498,12 @@ export default function Home() {
             >
               Create Free Account
             </button>
+          </div>
+        </section>
+
+        <section className="py-12 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-6">
+            <AdSenseUnit variant="multiplex" />
           </div>
         </section>
 
