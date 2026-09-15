@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { adminDb, FieldValue } from "@/lib/firebase-admin";
+import { settleExpiredPlansForUserAdmin } from "@/lib/settle-expired-plans-admin";
 
 export async function POST(req: Request) {
   try {
@@ -8,6 +9,8 @@ export async function POST(req: Request) {
     if (!userId || !bundle_id || !phone_number || !amount) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
+
+    await settleExpiredPlansForUserAdmin(userId);
 
     const userRef = adminDb.collection("users").doc(userId);
     const userSnap = await userRef.get();

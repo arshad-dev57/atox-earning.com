@@ -34,6 +34,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { getPlan } from "@/lib/plans";
 import { isPurchaseActive } from "@/lib/purchases";
+import { forfeitTaskBalanceIfNoActivePlan } from "@/lib/settle-expired-plans";
 
 const PAGE_SIZE = 10;
 
@@ -480,18 +481,26 @@ export default function AdminPage() {
           : { expiredAt: serverTimestamp() }),
       });
 
+      const forfeited = await forfeitTaskBalanceIfNoActivePlan(userId);
+
       await addDoc(collection(db, "notifications"), {
         userId,
         title: status === "cancelled" ? "Purchase Cancelled" : "Purchase Expired",
         message:
           status === "cancelled"
             ? `Your ${productName} plan has been cancelled by admin.`
-            : `Your ${productName} plan has been marked as expired by admin.`,
+            : forfeited.balanceCleared
+              ? `Your ${productName} plan has expired. Your task balance has been reset to ₦0.`
+              : `Your ${productName} plan has been marked as expired by admin.`,
         type: "error",
         createdAt: serverTimestamp(),
       });
 
-      toast.success(`Purchase ${status}.`);
+      toast.success(
+        forfeited.balanceCleared
+          ? `Purchase ${status}. Task balance reset to ₦0.`
+          : `Purchase ${status}.`
+      );
       fetchData();
     } catch (error) {
       console.error(`Error marking purchase ${status}:`, error);

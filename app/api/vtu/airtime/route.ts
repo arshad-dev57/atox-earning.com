@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { adminDb, FieldValue } from "@/lib/firebase-admin";
+import { settleExpiredPlansForUserAdmin } from "@/lib/settle-expired-plans-admin";
 
 export async function POST(req: Request) {
   try {
@@ -12,6 +13,8 @@ export async function POST(req: Request) {
     if (amount < 50) {
       return NextResponse.json({ error: "Minimum amount is NGN 50" }, { status: 400 });
     }
+
+    await settleExpiredPlansForUserAdmin(userId);
 
     // 1. Check user balance using Admin SDK
     const userRef = adminDb.collection("users").doc(userId);

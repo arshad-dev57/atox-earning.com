@@ -11,10 +11,6 @@ import {
   setDoc,
   updateDoc,
   increment,
-  query,
-  collection,
-  where,
-  getDocs,
   serverTimestamp,
 } from "firebase/firestore";
 import {
@@ -24,7 +20,7 @@ import {
   TrophyIcon,
   LockClosedIcon,
 } from "@heroicons/react/24/outline";
-import { isPurchaseActive } from "@/lib/purchases";
+import { settleExpiredPlansForUser } from "@/lib/settle-expired-plans";
 import { AD_VIDEO_MODE, openAdsterraSmartlink } from "@/lib/ads";
 import { FREE_MODE_EARNING_PER_AD, FREE_MODE_ID } from "@/lib/free-mode";
 import PlanVideoAd from "@/components/PlanVideoAd";
@@ -67,11 +63,8 @@ export default function FreeModePage() {
     if (!userId) return;
     const fetchData = async () => {
       try {
-        const q = query(collection(db, "purchases"), where("userId", "==", userId));
-        const snap = await getDocs(q);
-        const active = snap.docs
-          .map((d) => ({ id: d.id, ...d.data() } as any))
-          .some((p) => isPurchaseActive(p));
+        const settled = await settleExpiredPlansForUser(userId);
+        const active = settled.hasActivePlan;
         setHasActivePlan(active);
 
         if (!active) {

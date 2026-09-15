@@ -26,6 +26,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { getPlan } from "@/lib/plans";
 import { isPurchaseActive } from "@/lib/purchases";
+import { settleExpiredPlansForUser } from "@/lib/settle-expired-plans";
 import { AD_VIDEO_MODE } from "@/lib/ads";
 import PlanVideoAd from "@/components/PlanVideoAd";
 
@@ -107,6 +108,14 @@ export default function PlanDetailPage() {
     if (!userId || !product || claiming || !adCompleted) return;
     setClaiming(true);
     try {
+      const settled = await settleExpiredPlansForUser(userId);
+      if (settled.balanceCleared || !isPurchaseActive(purchase)) {
+        toast.error("This plan has expired. Task balance has been reset to ₦0.");
+        setPurchase(null);
+        setPlayingAd(null);
+        setAdCompleted(false);
+        return;
+      }
       const newWatched = adsWatched + 1;
       const earningPerAd = product.dailyIncome / product.ads;
       const progressRef = doc(db, "adProgress", `${userId}_${productId}_${todayKey}`);

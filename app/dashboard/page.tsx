@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { auth, db } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import {
@@ -25,6 +26,7 @@ import Script from "next/script";
 import { ADS_ENABLED, openAdsterraSmartlink } from "@/lib/ads";
 import { PLANS } from "@/lib/plans";
 import { isPurchaseActive } from "@/lib/purchases";
+import { settleExpiredPlansForUser } from "@/lib/settle-expired-plans";
 import {
   HomeIcon,
   ShoppingBagIcon,
@@ -56,7 +58,6 @@ const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
-// --- Sidebar Component ---
 const Sidebar = ({
   activeTab,
   setActiveTab,
@@ -429,7 +430,17 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
       return;
     }
     const isTask = balanceType === "task";
-    const availableBalance = isTask ? balance : referralBalance;
+    let availableBalance = isTask ? balance : referralBalance;
+
+    if (isTask) {
+      const settled = await settleExpiredPlansForUser(uid);
+      const userSnap = await getDoc(doc(db, "users", uid));
+      availableBalance = Number(userSnap.data()?.balance || 0);
+      if (settled.balanceCleared) {
+        alert("Your plan has expired. Task balance has been reset to ₦0.");
+        return;
+      }
+    }
 
     if (withdrawAmount > availableBalance) {
       alert(`Insufficient ${isTask ? "Task" : "Referral"} balance`);
@@ -601,7 +612,6 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
   );
 };
 
-// --- Home Tab ---
 const HomeTab = ({ userData, userId }: { userData: any; userId: string | null }) => {
   const [balance, setBalance] = useState(userData?.balance || 0);
   const [referralBalance, setReferralBalance] = useState(userData?.referralBalance || 0);
@@ -796,7 +806,6 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
         </div>
       )}
 
-      {/* Withdraw Info Banner */}
       <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-2xl p-5">
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -810,13 +819,10 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
           </div>
         </div>
       </div>
-
-      {/* Purchased Products - Now redirects to plan page */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-900">Your Plans</h2>
         </div>
-
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
@@ -862,8 +868,6 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
                       <p className="text-lg font-bold text-emerald-600">{formatCurrency(product.dailyIncome)}</p>
                     </div>
                   </div>
-
-                  {/* Ad Progress */}
                   <div className="mb-4">
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-gray-600 font-medium">Ads Watched Today</span>
@@ -880,8 +884,6 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
                       <span>Remaining: {formatCurrency((totalAds - watched) * earningPerAd)}</span>
                     </div>
                   </div>
-
-                  {/* Watch Ad Button */}
                   <button
                     onClick={() => {
                       openAdsterraSmartlink();
@@ -916,8 +918,6 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
     </div>
   );
 };
-
-// --- Tasks Tab ---
 const TasksTab = ({ userId }: { userId: string | null }) => {
   const router = useRouter();
   const [purchasedProducts, setPurchasedProducts] = useState<any[]>([]);
@@ -994,9 +994,7 @@ const TasksTab = ({ userId }: { userId: string | null }) => {
                 key={product.id}
                 className={`bg-white rounded-2xl p-6 shadow-sm border-2 transition-all hover:shadow-md ${isDone ? "border-emerald-200" : "border-blue-100"
                   }`}
-              >
-                {/* Header */}
-                <div className="flex items-start justify-between mb-5">
+              >                <div className="flex items-start justify-between mb-5">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-2xl">{isDone ? "✅" : "📺"}</span>
@@ -1112,7 +1110,6 @@ const CustomerCareTab = () => {
               </div>
             </div>
           </div>
-
           <div className="px-8 py-6 space-y-6">
             <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
               <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -2195,6 +2192,11 @@ export default function Dashboard() {
       }
       setUserId(user.uid);
       try {
+        const settled = await settleExpiredPlansForUser(user.uid);
+        if (settled.balanceCleared) {
+          toast.error("Your plan has expired. Task balance has been reset to ₦0.");
+        }
+
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
@@ -2219,12 +2221,7 @@ export default function Dashboard() {
           });
         }
 
-        const purchasesQ = query(collection(db, "purchases"), where("userId", "==", user.uid));
-        const purchasesSnap = await getDocs(purchasesQ);
-        const active = purchasesSnap.docs
-          .map((d) => ({ id: d.id, ...d.data() } as any))
-          .some((p) => isPurchaseActive(p));
-        setHasActivePlan(active);
+        setHasActivePlan(settled.hasActivePlan);
       } catch (error) {
         console.error("Error fetching user data:", error);
       } finally {
