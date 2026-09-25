@@ -21,7 +21,6 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import ImageUpload from "@/components/ImageUpload";
-import AdSenseUnit from "@/components/AdSenseUnit";
 import Script from "next/script";
 import { ADS_ENABLED, openAdsterraSmartlink } from "@/lib/ads";
 import { PLANS } from "@/lib/plans";
@@ -913,8 +912,6 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
           </div>
         )}
       </div>
-
-      <AdSenseUnit variant="display" />
     </div>
   );
 };
@@ -1350,8 +1347,6 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
         </div>
       )}
 
-      <AdSenseUnit variant="feed" className="mb-6" />
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
           <div
@@ -1408,8 +1403,6 @@ const ProductsTab = ({ userId }: { userId: string | null }) => {
           </div>
         ))}
       </div>
-
-      <AdSenseUnit variant="multiplex" className="mt-6" />
 
       {/* Payment Modal */}
       {showPaymentModal && selectedProduct && (

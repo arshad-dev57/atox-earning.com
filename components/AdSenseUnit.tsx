@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ADSENSE_CLIENT_ID,
   ADSENSE_FEED_LAYOUT_KEY,
   ADSENSE_SLOTS,
 } from "@/lib/ads";
+import { isAdSenseAllowedRoute, getCurrentPath } from "@/lib/ads-routes";
 
 export type AdSenseVariant = "display" | "feed" | "article" | "multiplex";
 
@@ -51,6 +52,44 @@ export default function AdSenseUnit({
   const insRef = useRef<HTMLModElement>(null);
   const pushed = useRef(false);
   const cfg = UNIT[variant];
+  const [shouldRender, setShouldRender] = useState(false);
+
+  // Check if current route allows ads
+  useEffect(() => {
+    const checkRoute = () => {
+      const path = getCurrentPath();
+      setShouldRender(isAdSenseAllowedRoute(path));
+    };
+
+    // Initial check
+    checkRoute();
+
+    // Listen for route changes
+    const handleRouteChange = () => {
+      checkRoute();
+    };
+
+    window.addEventListener("popstate", handleRouteChange);
+    
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+    
+    history.pushState = function(...args) {
+      originalPushState.apply(history, args);
+      handleRouteChange();
+    };
+    
+    history.replaceState = function(...args) {
+      originalReplaceState.apply(history, args);
+      handleRouteChange();
+    };
+
+    return () => {
+      window.removeEventListener("popstate", handleRouteChange);
+      history.pushState = originalPushState;
+      history.replaceState = originalReplaceState;
+    };
+  }, []);
 
   useEffect(() => {
     const ins = insRef.current;
@@ -64,6 +103,10 @@ export default function AdSenseUnit({
       // Ignore duplicate fill errors on remount
     }
   }, []);
+
+  if (!shouldRender) {
+    return null;
+  }
 
   return (
     <aside

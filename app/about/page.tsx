@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import AdSenseUnit from "@/components/AdSenseUnit";
-import { ArrowLeftIcon, ShieldCheckIcon, LightBulbIcon, UserGroupIcon, ChartBarIcon, ScaleIcon } from "@heroicons/react/24/outline";
+import { ShieldCheckIcon, LightBulbIcon, UserGroupIcon, ChartBarIcon, ScaleIcon } from "@heroicons/react/24/outline";
 
 export default function AboutPage() {
   const router = useRouter();
@@ -110,7 +110,7 @@ export default function AboutPage() {
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Vision</h2>
             <p className="text-gray-600 leading-relaxed">
-              To become one of Africa's most trusted digital investment platforms, connecting millions of people with innovative financial opportunities and helping them build long-term wealth responsibly.
+              To become one of Africa&apos;s most trusted digital investment platforms, connecting millions of people with innovative financial opportunities and helping them build long-term wealth responsibly.
             </p>
           </div>
         </section>
@@ -175,6 +175,48 @@ export default function AboutPage() {
             </button>
           </div>
         </section>
+
+        {/* Footer */}
+        <footer className="bg-gray-900 text-white py-12 mt-16">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid md:grid-cols-4 gap-8 mb-8">
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <img src="/logo.jpg?v=2" alt="Atox Logo" className="h-10 w-auto" />
+                  <span className="text-xl font-bold">ATOX</span>
+                </div>
+                <p className="text-gray-400 text-sm">
+                  Your trusted partner for secure investments and digital services.
+                </p>
+              </div>
+              <div>
+                <h4 className="font-bold mb-4">Quick Links</h4>
+                <ul className="space-y-2 text-gray-400">
+                  <li><Link href="/" className="hover:text-white transition">Home</Link></li>
+                  <li><Link href="/about" className="hover:text-white transition">About Us</Link></li>
+                  <li><Link href="/contact" className="hover:text-white transition">Contact</Link></li>
+                  <li><Link href="/faq" className="hover:text-white transition">FAQ</Link></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-bold mb-4">Legal</h4>
+                <ul className="space-y-2 text-gray-400">
+                  <li><Link href="/privacy" className="hover:text-white transition">Privacy Policy</Link></li>
+                  <li><Link href="/terms" className="hover:text-white transition">Terms & Conditions</Link></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-bold mb-4">Contact</h4>
+                <ul className="space-y-2 text-gray-400">
+                  <li>support@atoxinvestmentplatform.com</li>
+                </ul>
+              </div>
+            </div>
+            <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
+              <p>&copy; 2024 ATOX Investment Platform. All rights reserved.</p>
+            </div>
+          </div>
+        </footer>
       </main>
     </div>
   );

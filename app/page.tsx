@@ -555,17 +555,16 @@ export default function Home() {
                 <h4 className="font-bold mb-4">Support</h4>
                 <ul className="space-y-2 text-gray-400">
                   <li><a href="/about" className="hover:text-white transition">About Us</a></li>
-                  <li><a href="#" className="hover:text-white transition">Contact</a></li>
-                  <li><a href="#" className="hover:text-white transition">FAQ</a></li>
-                  <li><a href="#" className="hover:text-white transition">Terms</a></li>
+                  <li><a href="/contact" className="hover:text-white transition">Contact</a></li>
+                  <li><a href="/faq" className="hover:text-white transition">FAQ</a></li>
+                  <li><a href="/privacy" className="hover:text-white transition">Privacy Policy</a></li>
+                  <li><a href="/terms" className="hover:text-white transition">Terms & Conditions</a></li>
                 </ul>
               </div>
               <div>
                 <h4 className="font-bold mb-4">Contact</h4>
                 <ul className="space-y-2 text-gray-400">
-                  <li>support@atox-earning.com</li>
-                  <li>+234 800 123 4567</li>
-                  <li>Lagos, Nigeria</li>
+                  <li>support@atoxinvestmentplatform.com</li>
                 </ul>
               </div>
             </div>
