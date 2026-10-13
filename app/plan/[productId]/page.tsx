@@ -1,5 +1,6 @@
 "use client";
 
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useRouter, useParams } from "next/navigation";
@@ -56,16 +57,20 @@ export default function PlanDetailPage() {
   const todayKey = new Date().toISOString().split("T")[0];
 
   const product = getPlan(productId);
+=======
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+export default function PlanDetailPage() {
+  const router = useRouter();
+>>>>>>> f8e1e16 (worked on withdrawl of 2k)
 
   // Auth check
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (!user) { router.push("/login"); return; }
-      setUserId(user.uid);
-    });
-    return () => unsub();
+    router.push("/dashboard");
   }, [router]);
 
+<<<<<<< HEAD
   // Fetch purchase + progress
   useEffect(() => {
     if (!userId || !product) return;
@@ -166,247 +171,13 @@ export default function PlanDetailPage() {
   const progressPct = (adsWatched / totalAds) * 100;
   const allDone = adsWatched >= totalAds;
 
+=======
+>>>>>>> f8e1e16 (worked on withdrawl of 2k)
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50/30 pb-24">
-      {/* Video Ad Player Modal */}
-      {playingAd !== null && (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
-          <div className="bg-gray-900 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl">
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
-              <div>
-                <p className="text-white font-semibold text-sm">Ad {playingAd} of {totalAds}</p>
-                <p className="text-gray-400 text-xs">{product.name} · Earn {formatCurrency(earningPerAd)}</p>
-              </div>
-              {adCompleted && (
-                <button onClick={closePlayer} className="text-gray-500 hover:text-gray-300 text-xs transition">
-                  Close
-                </button>
-              )}
-            </div>
-
-            {/* Video Area — static for now, Adsterra VAST when mode=vast */}
-            <div className="relative bg-black overflow-hidden" style={{ paddingTop: "56.25%" }}>
-              <div className="absolute inset-0">
-                {!adCompleted && !adError && (
-                  <PlanVideoAd
-                    slotKey={playingAd}
-                    onCompleted={() => {
-                      setAdCompleted(true);
-                      setAdError(null);
-                    }}
-                    onError={(message) => {
-                      setAdError(message);
-                      setAdCompleted(false);
-                      toast.error(message);
-                    }}
-                  />
-                )}
-                {adCompleted && (
-                  <div className="absolute inset-0 bg-black/70 flex items-center justify-center z-10">
-                    <div className="text-center">
-                      <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-emerald-500/40">
-                        <CheckCircleIcon className="w-9 h-9 text-white" />
-                      </div>
-                      <p className="text-white font-bold text-lg">Ad Complete!</p>
-                      <p className="text-emerald-400 text-sm">Claim your reward below</p>
-                    </div>
-                  </div>
-                )}
-                {adError && !adCompleted && (
-                  <div className="absolute inset-0 bg-black flex items-center justify-center p-6 text-center z-10">
-                    <div>
-                      <p className="text-red-400 font-semibold mb-2">Ad did not complete</p>
-                      <p className="text-gray-400 text-sm mb-4">{adError}</p>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setAdError(null);
-                          setAdCompleted(false);
-                          const slot = playingAd;
-                          setPlayingAd(null);
-                          requestAnimationFrame(() => setPlayingAd(slot));
-                        }}
-                        className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold"
-                      >
-                        Try Again
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Action */}
-            <div className="p-5">
-              {adCompleted ? (
-                <button
-                  onClick={claimReward}
-                  disabled={claiming}
-                  className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-2xl font-bold text-base hover:shadow-lg hover:shadow-emerald-500/30 transition-all disabled:opacity-60 flex items-center justify-center gap-2"
-                >
-                  {claiming ? (
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <>
-                      <TrophyIcon className="w-5 h-5" />
-                      Claim {formatCurrency(earningPerAd)}
-                    </>
-                  )}
-                </button>
-              ) : (
-                <p className="text-center text-gray-400 text-sm">
-                  {AD_VIDEO_MODE === "vast"
-                    ? "Watch the full Adsterra video ad to unlock your reward"
-                    : "Watch the full video to unlock your reward"}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Page Header */}
-      <div className={`bg-gradient-to-r ${product.color} text-white`}>
-        <div className="max-w-2xl mx-auto px-4 py-6">
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="flex items-center gap-2 text-white/80 hover:text-white mb-4 transition text-sm font-medium"
-          >
-            <ArrowLeftIcon className="w-4 h-4" />
-            Back to Dashboard
-          </button>
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">{product.name}</h1>
-              <p className="text-white/70 mt-1 text-sm">Watch {totalAds} ads daily to earn {formatCurrency(product.dailyIncome)}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs text-white/60">Daily Income</p>
-              <p className="text-2xl font-bold">{formatCurrency(product.dailyIncome)}</p>
-            </div>
-          </div>
-
-          {/* Progress Overview */}
-          <div className="mt-5 bg-white/10 backdrop-blur-sm rounded-2xl p-4">
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-white/80">Today's Progress</span>
-              <span className="font-bold text-white">{adsWatched}/{totalAds} ads</span>
-            </div>
-            <div className="w-full bg-white/20 rounded-full h-3 overflow-hidden">
-              <div
-                className="h-3 rounded-full bg-white transition-all duration-500"
-                style={{ width: `${progressPct}%` }}
-              />
-            </div>
-            <div className="flex justify-between text-xs text-white/70 mt-2">
-              <span>Earned today: {formatCurrency(todayEarned)}</span>
-              <span>Remaining: {formatCurrency((totalAds - adsWatched) * earningPerAd)}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Ads List */}
-      <div className="max-w-2xl mx-auto px-4 py-6">
-        {loading ? (
-          <div className="flex justify-center py-12">
-            <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
-          </div>
-        ) : !purchase ? (
-          <div className="bg-white rounded-2xl p-10 text-center border-2 border-dashed border-gray-200">
-            <LockClosedIcon className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 font-semibold">You haven't purchased this plan</p>
-            <p className="text-sm text-gray-400 mt-1">Go to Products to buy this plan</p>
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="mt-4 px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold text-sm hover:bg-emerald-700 transition"
-            >
-              View Plans
-            </button>
-          </div>
-        ) : allDone ? (
-          <div className="bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-200 rounded-2xl p-8 text-center mb-4">
-            <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-emerald-500/30">
-              <TrophyIcon className="w-9 h-9 text-white" />
-            </div>
-            <p className="text-emerald-700 font-bold text-xl">All Done for Today! 🎉</p>
-            <p className="text-emerald-600 text-sm mt-1">You earned {formatCurrency(product.dailyIncome)} today. Come back tomorrow!</p>
-          </div>
-        ) : (
-          <div className="mb-4 bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center gap-3">
-            <PlayIcon className="w-5 h-5 text-blue-600 flex-shrink-0" />
-            <p className="text-blue-700 text-sm font-medium">
-              You can watch <strong>Ad #{adsWatched + 1}</strong> next. Ads unlock one by one after you claim each reward.
-            </p>
-          </div>
-        )}
-
-        {/* Ad Slots Grid */}
-        <div className="grid grid-cols-1 gap-3">
-          {Array.from({ length: totalAds }, (_, i) => {
-            const slotNum = i + 1;
-            const isWatched = slotNum <= adsWatched;
-            const isNext = slotNum === adsWatched + 1;
-            const isLocked = slotNum > adsWatched + 1;
-
-            return (
-              <div
-                key={slotNum}
-                onClick={() => !isLocked && !isWatched && startAd(slotNum)}
-                className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${
-                  isWatched
-                    ? "bg-emerald-50 border-emerald-200 cursor-default"
-                    : isNext
-                    ? "bg-white border-blue-400 shadow-md shadow-blue-100 cursor-pointer hover:shadow-lg hover:shadow-blue-200 active:scale-[0.98]"
-                    : "bg-gray-50 border-gray-100 cursor-not-allowed opacity-60"
-                }`}
-              >
-                {/* Slot number / icon */}
-                <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                    isWatched
-                      ? "bg-emerald-500"
-                      : isNext
-                      ? "bg-blue-600"
-                      : "bg-gray-200"
-                  }`}
-                >
-                  {isWatched ? (
-                    <CheckCircleIcon className="w-6 h-6 text-white" />
-                  ) : isNext ? (
-                    <PlayIcon className="w-6 h-6 text-white" />
-                  ) : (
-                    <LockClosedIcon className="w-5 h-5 text-gray-400" />
-                  )}
-                </div>
-
-                {/* Info */}
-                <div className="flex-1">
-                  <p className={`font-semibold ${isWatched ? "text-emerald-700" : isNext ? "text-gray-900" : "text-gray-400"}`}>
-                    Ad #{slotNum}
-                  </p>
-                  <p className={`text-xs mt-0.5 ${isWatched ? "text-emerald-500" : isNext ? "text-blue-600" : "text-gray-400"}`}>
-                    {isWatched ? "Watched · Earned" : isNext ? "Tap to watch now" : "Locked — watch previous ads first"}
-                  </p>
-                </div>
-
-                {/* Earning badge */}
-                <div
-                  className={`px-3 py-1.5 rounded-xl text-sm font-bold ${
-                    isWatched
-                      ? "bg-emerald-100 text-emerald-700"
-                      : isNext
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-gray-100 text-gray-400"
-                  }`}
-                >
-                  {formatCurrency(earningPerAd)}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="text-center">
+        <div className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-gray-600">Redirecting...</p>
       </div>
     </div>
   );

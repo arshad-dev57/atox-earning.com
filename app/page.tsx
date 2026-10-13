@@ -56,7 +56,6 @@ export default function Home() {
             <a href="#features" className="text-gray-600 hover:text-emerald-600 transition">Features</a>
             <a href="#data-airtime" className="text-gray-600 hover:text-emerald-600 transition">Data & Airtime</a>
             <a href="#how-it-works" className="text-gray-600 hover:text-emerald-600 transition">How It Works</a>
-            <a href="#pricing" className="text-gray-600 hover:text-emerald-600 transition">Pricing</a>
           </nav>
           <div className="flex items-center gap-4">
             <button
@@ -94,12 +93,6 @@ export default function Home() {
                 className="px-8 py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-2xl font-semibold text-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all hover:scale-105 transform"
               >
                 Get Started Now
-              </button>
-              <button
-                onClick={() => router.push("/plan")}
-                className="px-8 py-4 bg-white text-gray-900 border-2 border-gray-200 rounded-2xl font-semibold text-lg hover:border-emerald-600 hover:text-emerald-600 transition-all hover:scale-105 transform"
-              >
-                View Plans
               </button>
             </div>
             
@@ -362,116 +355,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Pricing Preview Section */}
-        <section id="pricing" className="py-20 bg-gradient-to-br from-emerald-50 to-white">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4 animate-fade-in-up">Investment Plans</h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                Choose the plan that fits your investment goals
-              </p>
-            </div>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition-shadow hover:scale-105 transform animate-scale-in" style={{ animationDelay: '0.3s' }}>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Starter</h3>
-                <div className="text-4xl font-bold text-gray-900 mb-1">₦5,000</div>
-                <p className="text-gray-600 mb-6">Minimum investment</p>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center gap-2 text-gray-700">
-                    <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    2% daily returns
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-700">
-                    <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    20 daily ad tasks
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-700">
-                    <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    ₦750 daily income
-                  </li>
-                </ul>
-                <button
-                  onClick={() => router.push("/register")}
-                  className="w-full py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all hover:shadow-lg"
-                >
-                  Get Started
-                </button>
-              </div>
-              <div className="p-8 bg-gradient-to-br from-emerald-600 to-green-600 to-white rounded-2xl border border-emerald-200 hover:shadow-xl transition-shadow hover:scale-105 transform animate-scale-in relative" style={{ animationDelay: '0.4s' }}>
-                <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-xl">
-                  POPULAR
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">Professional</h3>
-                <div className="text-4xl font-bold text-white mb-1">₦10,000</div>
-                <p className="text-emerald-100 mb-6">Minimum investment</p>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center gap-2 text-white">
-                    <svg className="w-5 h-5 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    3% daily returns
-                  </li>
-                  <li className="flex items-center gap-2 text-white">
-                    <svg className="w-5 h-5 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    35 daily ad tasks
-                  </li>
-                  <li className="flex items-center gap-2 text-white">
-                    <svg className="w-5 h-5 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    ₦1,200 daily income
-                  </li>
-                </ul>
-                <button
-                  onClick={() => router.push("/register")}
-                  className="w-full py-3 bg-white text-emerald-600 rounded-xl font-semibold hover:bg-gray-100 transition-all hover:shadow-lg"
-                >
-                  Get Started
-                </button>
-              </div>
-              <div className="p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition-shadow hover:scale-105 transform animate-scale-in" style={{ animationDelay: '0.5s' }}>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Enterprise</h3>
-                <div className="text-4xl font-bold text-gray-900 mb-1">₦25,000</div>
-                <p className="text-gray-600 mb-6">Minimum investment</p>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center gap-2 text-gray-700">
-                    <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    4% daily returns
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-700">
-                    <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    50 daily ad tasks
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-700">
-                    <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    ₦2,200 daily income
-                  </li>
-                </ul>
-                <button
-                  onClick={() => router.push("/register")}
-                  className="w-full py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all hover:shadow-lg"
-                >
-                  Get Started
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* CTA Section */}
         <section className="py-20 bg-gradient-to-r from-emerald-600 to-green-600">
           <div className="max-w-4xl mx-auto px-6 text-center animate-fade-in-up">
@@ -529,7 +412,6 @@ export default function Home() {
                   <li><a href="#features" className="hover:text-white transition">Features</a></li>
                   <li><a href="#data-airtime" className="hover:text-white transition">Data & Airtime</a></li>
                   <li><a href="#how-it-works" className="hover:text-white transition">How It Works</a></li>
-                  <li><a href="#pricing" className="hover:text-white transition">Pricing</a></li>
                 </ul>
               </div>
               <div>

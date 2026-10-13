@@ -26,7 +26,6 @@ import { PLANS } from "@/lib/plans";
 import { isPurchaseActive } from "@/lib/purchases";
 import {
   HomeIcon,
-  ShoppingBagIcon,
   UsersIcon,
   UserIcon,
   ArrowRightOnRectangleIcon,
@@ -71,7 +70,6 @@ const Sidebar = ({
     { id: "home", label: "Home", icon: HomeIcon },
     ...(showFreeMode ? [{ id: "freemode", label: "Free Mode", icon: PlayIcon }] : []),
     { id: "tasks", label: "Tasks", icon: ListBulletIcon },
-    { id: "products", label: "Products", icon: ShoppingBagIcon },
     { id: "team", label: "Team", icon: UsersIcon },
     { id: "notifications", label: "Notifications", icon: BellIcon },
     { id: "support", label: "Customer Care", icon: ChatBubbleLeftRightIcon },
@@ -85,7 +83,6 @@ const Sidebar = ({
     showFreeMode
       ? { id: "freemode", label: "Free Mode", icon: PlayIcon }
       : { id: "tasks", label: "Tasks", icon: ListBulletIcon },
-    { id: "products", label: "Products", icon: ShoppingBagIcon },
     { id: "profile", label: "Profile", icon: UserIcon },
   ];
 
@@ -405,15 +402,6 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
   });
   const [loading, setLoading] = useState(false);
 
-  // Check if Task withdrawal is allowed: Friday 8 AM - 8 PM Nigerian Time (UTC+1)
-  const isTaskAllowed = (() => {
-    const now = new Date();
-    const nigeriaTime = new Date(now.getTime() + (1 * 60 * 60 * 1000) - (now.getTimezoneOffset() * 60 * 1000));
-    const isFriday = nigeriaTime.getUTCDay() === 5;
-    const hour = nigeriaTime.getUTCHours();
-    return isFriday && hour >= 8 && hour < 20;
-  })();
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const withdrawAmount = parseInt(amount);
@@ -423,8 +411,8 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
       return;
     }
     const uid = userId;
-    if (!amount || withdrawAmount < 5000) {
-      alert("Minimum withdrawal is ₦5,000");
+    if (!amount || withdrawAmount < 2000) {
+      alert("Minimum withdrawal is ₦2,000");
       return;
     }
     const isTask = balanceType === "task";
@@ -432,11 +420,6 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
 
     if (withdrawAmount > availableBalance) {
       alert(`Insufficient ${isTask ? "Task" : "Referral"} balance`);
-      return;
-    }
-
-    if (isTask && !isTaskAllowed) {
-      alert("Task Balance can only be withdrawn on Fridays between 8:00 AM and 8:00 PM (Nigerian Time).");
       return;
     }
 
@@ -492,7 +475,7 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
             <ClockIcon className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-sm font-semibold text-yellow-800">Withdrawal Schedule</p>
-              <p className="text-xs text-yellow-700">Every Friday (8 AM - 8 PM) • Minimum ₦5,000</p>
+              <p className="text-xs text-yellow-700">Available daily • Minimum ₦2,000</p>
             </div>
           </div>
         </div>
@@ -517,21 +500,9 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
               onChange={(e) => setBalanceType(e.target.value)}
               className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all mb-3"
             >
-              <option value="referral">Referral Balance — {formatCurrency(referralBalance)} (Available anytime)</option>
-              <option value="task" disabled={!isTaskAllowed}>Task Balance — {formatCurrency(balance)}{!isTaskAllowed ? " 🔒 (Fridays 8AM–8PM only)" : ""}</option>
+              <option value="referral">Referral Balance — {formatCurrency(referralBalance)}</option>
+              <option value="task">Task Balance — {formatCurrency(balance)}</option>
             </select>
-
-            {/* Lock notice when task is not available */}
-            {!isTaskAllowed && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-3 flex items-start gap-2">
-                <span className="text-red-500 text-lg leading-none">🔒</span>
-                <div>
-                  <p className="text-sm font-semibold text-red-700">Task Balance Locked</p>
-                  <p className="text-xs text-red-600">Task withdrawals are only available every <strong>Friday from 8:00 AM to 8:00 PM</strong> (Nigerian Time). You can still withdraw your Referral Balance now.</p>
-                </div>
-              </div>
-              
-            )}
 
             <label className="block text-sm font-semibold text-gray-700 mb-1.5">
               Amount (₦)
@@ -540,10 +511,10 @@ const WithdrawModal = ({ isOpen, onClose, onWithdraw, userId, balance, referralB
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              placeholder="Enter amount (min ₦5,000)"
+              placeholder="Enter amount (min ₦2,000)"
               className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all"
               required
-              min="5000"
+              min="2000"
             />
             <p className="text-xs text-gray-500 mt-1.5">
               Available: {formatCurrency(balanceType === "task" ? balance : referralBalance)}
@@ -732,7 +703,7 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
               <p className="text-2xl font-bold text-gray-900 mt-1">{purchasedProducts.length}</p>
             </div>
             <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-              <ShoppingBagIcon className="w-6 h-6 text-purple-600" />
+              <WalletIcon className="w-6 h-6 text-purple-600" />
             </div>
           </div>
           <div className="mt-3 flex items-center gap-2">
@@ -805,7 +776,7 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
           <div>
             <p className="font-semibold text-yellow-800">📌 Withdrawal Schedule</p>
             <p className="text-sm text-yellow-700">
-              Every Friday from 8 AM to 8 PM (Minimum ₦5,000)
+              Available daily (Minimum ₦2,000)
             </p>
           </div>
         </div>
@@ -824,7 +795,7 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
         ) : purchasedProducts.length === 0 ? (
           <div className="bg-white rounded-2xl p-12 text-center border-2 border-dashed border-gray-200">
             <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <ShoppingBagIcon className="w-10 h-10 text-gray-400" />
+              <WalletIcon className="w-10 h-10 text-gray-400" />
             </div>
             <p className="text-gray-500 font-medium">No products purchased yet</p>
             <p className="text-sm text-gray-400 mt-1 mb-4">
@@ -885,7 +856,6 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
                   <button
                     onClick={() => {
                       openAdsterraSmartlink();
-                      router.push(`/plan/${product.productId}`);
                     }}
                     className={`w-full py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${isDone
                       ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -893,7 +863,7 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
                       }`}
                   >
                     {isDone ? (
-                      "✅ Completed (View Details)"
+                      "✅ Completed"
                     ) : (
                       <>
                         <span>📺</span>
@@ -1056,7 +1026,6 @@ const TasksTab = ({ userId }: { userId: string | null }) => {
                 <button
                   onClick={() => {
                     openAdsterraSmartlink();
-                    router.push(`/plan/${product.productId}`);
                   }}
                   className={`w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 active:scale-95 ${isDone
                     ? "bg-gray-100 text-gray-500 cursor-default"
@@ -2269,7 +2238,6 @@ export default function Dashboard() {
           <FreeModeTab setActiveTab={setActiveTab} />
         )}
         {activeTab === "tasks" && <TasksTab userId={userId} />}
-        {activeTab === "products" && <ProductsTab userId={userId} />}
         {activeTab === "team" && <TeamTab userId={userId} />}
         {activeTab === "notifications" && <NotificationsTab userId={userId} />}
         {activeTab === "support" && <CustomerCareTab />}
