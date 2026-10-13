@@ -68,7 +68,7 @@ const Sidebar = ({
 
   const menuItems = [
     { id: "home", label: "Home", icon: HomeIcon },
-    ...(showFreeMode ? [{ id: "freemode", label: "Free Mode", icon: PlayIcon }] : []),
+    ...(showFreeMode ? [{ id: "freemode", label: "Watch and Earn", icon: PlayIcon }] : []),
     { id: "tasks", label: "Tasks", icon: ListBulletIcon },
     { id: "team", label: "Team", icon: UsersIcon },
     { id: "notifications", label: "Notifications", icon: BellIcon },
@@ -77,11 +77,11 @@ const Sidebar = ({
     { id: "profile", label: "Profile", icon: UserIcon },
   ];
 
-  // Mobile bottom nav - Free Mode replaces Tasks when user has no VIP plan
+  // Mobile bottom nav - Watch and Earn replaces Tasks when user has no VIP plan
   const mobileMenuItems = [
     { id: "home", label: "Home", icon: HomeIcon },
     showFreeMode
-      ? { id: "freemode", label: "Free Mode", icon: PlayIcon }
+      ? { id: "freemode", label: "Watch and Earn", icon: PlayIcon }
       : { id: "tasks", label: "Tasks", icon: ListBulletIcon },
     { id: "profile", label: "Profile", icon: UserIcon },
   ];
@@ -799,14 +799,14 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
             </div>
             <p className="text-gray-500 font-medium">No products purchased yet</p>
             <p className="text-sm text-gray-400 mt-1 mb-4">
-              Use Free Mode to earn {formatCurrency(FREE_MODE_EARNING_PER_AD)} per ad, or buy a VIP plan
+              Use Watch and Earn to earn {formatCurrency(FREE_MODE_EARNING_PER_AD)} per ad, or buy a VIP plan
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <button
                 onClick={() => router.push("/free-mode")}
                 className="px-5 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold text-sm hover:shadow-lg transition"
               >
-                Open Free Mode
+                Open Watch and Earn
               </button>
             </div>
           </div>
@@ -939,13 +939,13 @@ const TasksTab = ({ userId }: { userId: string | null }) => {
           <h3 className="text-xl font-bold text-gray-800 mb-2">No Active Tasks</h3>
           <p className="text-gray-500 mb-4">
             You haven&apos;t purchased any plans yet.<br />
-            Use Free Mode to earn {formatCurrency(FREE_MODE_EARNING_PER_AD)} per ad, or buy a VIP plan.
+            Use Watch and Earn to earn {formatCurrency(FREE_MODE_EARNING_PER_AD)} per ad, or buy a VIP plan.
           </p>
           <button
             onClick={() => router.push("/free-mode")}
             className="px-5 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold text-sm hover:shadow-lg transition"
           >
-            Open Free Mode
+            Open Watch and Earn
           </button>
         </div>
       ) : (
@@ -2114,7 +2114,7 @@ const FreeModeTab = ({ setActiveTab }: { setActiveTab: (tab: string) => void }) 
   return (
     <div className="p-6 pb-24 lg:pb-6 space-y-6 bg-gradient-to-br from-gray-50 via-white to-teal-50/30 min-h-screen">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Free Mode</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Watch and Earn</h1>
         <p className="text-gray-500 mt-1">
           No VIP plan yet? Watch unlimited ads and earn {formatCurrency(FREE_MODE_EARNING_PER_AD)} each
         </p>
@@ -2137,7 +2137,7 @@ const FreeModeTab = ({ setActiveTab }: { setActiveTab: (tab: string) => void }) 
           className="w-full py-3.5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-bold hover:shadow-lg hover:shadow-teal-500/30 transition-all flex items-center justify-center gap-2"
         >
           <PlayIcon className="w-5 h-5" />
-          Start Free Mode
+          Start Watch and Earn
         </button>
 
         <button

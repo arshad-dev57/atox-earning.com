@@ -157,7 +157,7 @@ export default function FreeModePage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
         <div className="bg-white rounded-2xl p-10 text-center border border-gray-100 shadow-sm max-w-md w-full">
           <LockClosedIcon className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-800 font-semibold text-lg">Free Mode is locked</p>
+          <p className="text-gray-800 font-semibold text-lg">Watch and Earn is locked</p>
           <p className="text-sm text-gray-500 mt-2">
             You already have an active VIP plan. Use your plan tasks to earn instead.
           </p>
@@ -179,7 +179,7 @@ export default function FreeModePage() {
           <div className="bg-gray-900 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
               <div>
-                <p className="text-white font-semibold text-sm">Free Mode Ad</p>
+                <p className="text-white font-semibold text-sm">Watch and Earn Ad</p>
                 <p className="text-gray-400 text-xs">
                   Earn {formatCurrency(FREE_MODE_EARNING_PER_AD)} · Ad #{adsWatched + 1}
                 </p>
@@ -282,7 +282,7 @@ export default function FreeModePage() {
           </button>
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Free Mode</h1>
+              <h1 className="text-3xl font-bold">Watch and Earn</h1>
               <p className="text-white/70 mt-1 text-sm">
                 Watch unlimited ads · {formatCurrency(FREE_MODE_EARNING_PER_AD)} per video
               </p>
@@ -295,7 +295,7 @@ export default function FreeModePage() {
 
           <div className="mt-5 bg-white/10 backdrop-blur-sm rounded-2xl p-4">
             <div className="flex justify-between text-sm mb-1">
-              <span className="text-white/80">Today&apos;s Free Mode</span>
+              <span className="text-white/80">Today&apos;s Watch and Earn</span>
               <span className="font-bold text-white">{adsWatched} ads</span>
             </div>
             <p className="text-xs text-white/70">
@@ -312,7 +312,7 @@ export default function FreeModePage() {
               <PlayIcon className="w-6 h-6 text-teal-700" />
             </div>
             <div>
-              <p className="font-semibold text-gray-900">How Free Mode works</p>
+              <p className="font-semibold text-gray-900">How Watch and Earn works</p>
               <p className="text-sm text-gray-500 mt-1">
                 Tap watch → an ad opens → then watch the video → claim{" "}
                 {formatCurrency(FREE_MODE_EARNING_PER_AD)}. Repeat as many times as you want.
@@ -334,7 +334,7 @@ export default function FreeModePage() {
         </div>
 
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-sm text-amber-800">
-          Free Mode is for users without a VIP plan. Buy any plan from Products for higher daily
+          Watch and Earn is for users without a VIP plan. Buy any plan from Products for higher daily
           income.
         </div>
       </div>
