@@ -1,34 +1,62 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { ADS_ENABLED } from "@/lib/ads";
+import { isAdEligiblePath } from "@/lib/ad-eligibility";
 
+/**
+ * In-content Adsterra banner (468×60 iframe unit, key c0886ae1…) for
+ * eligible public content pages only.
+ *
+ * - On ineligible routes it renders nothing at all: no container is
+ *   reserved and no ad request is made.
+ * - No fixed-height placeholder is kept while loading or when the network
+ *   returns no ad, so the box collapses instead of showing blank space.
+ * - The unit script is injected once and removed on unmount.
+ */
 export default function AdBanner() {
+  const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement>(null);
+  const eligible = ADS_ENABLED && isAdEligiblePath(pathname);
 
   useEffect(() => {
-    if (!ADS_ENABLED) return;
-    if (typeof window === "undefined" || !containerRef.current) return;
+    if (!eligible || !containerRef.current) return;
+    const container = containerRef.current;
+    if (container.dataset.adLoaded === "true") return;
+    container.dataset.adLoaded = "true";
 
-    containerRef.current.innerHTML = "";
+    // atOptions must exist before the unit script runs.
+    (window as unknown as Record<string, unknown>).atOptions = {
+      key: "c0886ae1b3dd9ed31af9c5b36c6abf2f",
+      format: "iframe",
+      height: 60,
+      width: 468,
+      params: {},
+    };
 
     const script = document.createElement("script");
     script.async = true;
-    script.setAttribute("data-cfasync", "false");
-    script.src = "https://pl30103964.effectivecpmnetwork.com/1b52814ede6fd3a1a8ab62cb45f7e48d/invoke.js";
-    containerRef.current.appendChild(script);
-  }, []);
+    script.src =
+      "https://www.highperformanceformat.com/c0886ae1b3dd9ed31af9c5b36c6abf2f/invoke.js";
+    container.appendChild(script);
 
-  if (!ADS_ENABLED) return null;
+    return () => {
+      script.remove();
+    };
+  }, [eligible]);
+
+  if (!eligible) return null;
 
   return (
-    <div className="w-full flex flex-col items-center justify-center my-6 p-4 bg-white/50 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-      <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2 font-semibold">Sponsored Advertisement</p>
-      <div 
-        ref={containerRef} 
-        id="container-1b52814ede6fd3a1a8ab62cb45f7e48d" 
-        className="w-full max-w-full flex justify-center min-h-[80px]"
-      />
-    </div>
+    <aside
+      aria-label="Advertisement"
+      className="my-8 flex flex-col items-center"
+    >
+      <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+        Advertisement
+      </p>
+      <div ref={containerRef} className="flex w-full justify-center" />
+    </aside>
   );
 }

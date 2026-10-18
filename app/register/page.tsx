@@ -141,13 +141,14 @@ function RegisterForm() {
 
       toast.success("Registration successful! Please login.");
       router.push("/login");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Registration error:", error);
-      if (error.code === "auth/email-already-in-use") {
+      const code = (error as { code?: string })?.code;
+      if (code === "auth/email-already-in-use") {
         setError("Email already registered. Please login.");
-      } else if (error.code === "auth/invalid-email") {
+      } else if (code === "auth/invalid-email") {
         setError("Invalid email address");
-      } else if (error.code === "auth/weak-password") {
+      } else if (code === "auth/weak-password") {
         setError("Password is too weak. Please use a stronger password.");
       } else {
         setError("Registration failed. Please try again.");
@@ -186,7 +187,7 @@ function RegisterForm() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <div className="inline-block px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold mb-4">
-              Join 10,000+ users
+              Free registration · 18+
             </div>
             <h1 className="text-4xl font-bold text-gray-900 mb-3">Create Your Account</h1>
             <p className="text-lg text-gray-600">Start earning in Naira (₦) today!</p>

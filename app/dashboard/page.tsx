@@ -20,8 +20,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import ImageUpload from "@/components/ImageUpload";
-import Script from "next/script";
-import { ADS_ENABLED, openAdsterraSmartlink } from "@/lib/ads";
+import { openAdsterraSmartlink } from "@/lib/ads";
 import { PLANS } from "@/lib/plans";
 import { isPurchaseActive } from "@/lib/purchases";
 import {
@@ -744,28 +743,6 @@ const HomeTab = ({ userData, userId }: { userData: any; userId: string | null })
           Withdraw
         </button>
       </div>
-
-      {ADS_ENABLED && (
-        <div className="flex justify-center mt-6">
-          <div className="bg-gray-100 rounded-lg p-4">
-            <Script id="ad-banner-160x300" strategy="afterInteractive">
-              {`
-                atOptions = {
-                  'key' : 'c0886ae1b3dd9ed31af9c5b36c6abf2f',
-                  'format' : 'iframe',
-                  'height' : 300,
-                  'width' : 160,
-                  'params' : {}
-                };
-              `}
-            </Script>
-            <Script
-              src="https://www.highperformanceformat.com/c0886ae1b3dd9ed31af9c5b36c6abf2f/invoke.js"
-              strategy="afterInteractive"
-            />
-          </div>
-        </div>
-      )}
 
       {/* Withdraw Info Banner */}
       <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-2xl p-5">

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { auth, db } from "@/lib/firebase";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -43,11 +42,12 @@ import Link from "next/link";
         } else {
           router.push("/dashboard");
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error("Login error:", error);
-        if (error.code === "auth/user-not-found") {
+        const code = (error as { code?: string })?.code;
+        if (code === "auth/user-not-found") {
           setError("User not found. Please register first.");
-        } else if (error.code === "auth/wrong-password") {
+        } else if (code === "auth/wrong-password") {
           setError("Wrong password. Please try again.");
         } else {
           setError("Login failed. Please try again.");
@@ -148,7 +148,7 @@ import Link from "next/link";
 
             <div className="mt-6 pt-6 border-t border-gray-200 text-center">
               <p className="text-gray-600">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link href="/register" className="text-emerald-600 hover:text-emerald-700 font-semibold">
                   Create free account →
                 </Link>
@@ -159,16 +159,16 @@ import Link from "next/link";
           {/* Features Section */}
           <div className="mt-8 grid grid-cols-3 gap-4 text-center">
             <div className="bg-white rounded-xl p-4 border border-gray-100">
-              <div className="text-emerald-600 font-bold text-xl">₦0</div>
-              <div className="text-xs text-gray-600 mt-1">Min Withdraw</div>
+              <div className="text-emerald-600 font-bold text-xl">₦2,000</div>
+              <div className="text-xs text-gray-600 mt-1">Min Withdrawal</div>
             </div>
             <div className="bg-white rounded-xl p-4 border border-gray-100">
-              <div className="text-emerald-600 font-bold text-xl">24/7</div>
+              <div className="text-emerald-600 font-bold text-xl">Email</div>
               <div className="text-xs text-gray-600 mt-1">Support</div>
             </div>
             <div className="bg-white rounded-xl p-4 border border-gray-100">
-              <div className="text-emerald-600 font-bold text-xl">Instant</div>
-              <div className="text-xs text-gray-600 mt-1">Payments</div>
+              <div className="text-emerald-600 font-bold text-xl">Daily</div>
+              <div className="text-xs text-gray-600 mt-1">Withdrawals</div>
             </div>
           </div>
         </div>

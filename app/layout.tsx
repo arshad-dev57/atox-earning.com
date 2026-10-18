@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "react-hot-toast";
-import Script from "next/script";
-import { ADS_ENABLED, ADSENSE_CLIENT_ID } from "@/lib/ads";
-import AdsterraSmartlink from "@/components/AdsterraSmartlink";
+import { ADSENSE_CLIENT_ID } from "@/lib/ads";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
+import SiteAds from "@/components/SiteAds";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,9 +17,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ATOX Investment Platform",
-  description: "A modern digital investment platform for secure, transparent, and accessible investment opportunities.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} — Investment Plans, Watch & Earn, Data & Airtime`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description:
+    "ATOX Investment Platform offers tiered investment plans with daily tasks, a Watch and Earn programme, referral bonuses, and mobile data and airtime top-ups in Nigeria. Review our fees, risk disclosure and terms before investing.",
+  applicationName: SITE_NAME,
   other: {
+    // Site verification for the existing AdSense publisher account.
     "google-adsense-account": ADSENSE_CLIENT_ID,
   },
 };
@@ -35,47 +42,16 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {/* Google AdSense — always present so Google can verify the live site */}
-        <Script
-          async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-
         {children}
         <Toaster position="top-center" />
-        <AdsterraSmartlink />
 
-        {ADS_ENABLED && (
-          <>
-            {/* Adsterra Popunder */}
-            <Script
-              src="https://pl30130375.effectivecpmnetwork.com/9b/70/31/9b703119ae59c516b07fef704eede719.js"
-              strategy="afterInteractive"
-            />
-
-            {/* Legacy Adsterra native/smartlink unit */}
-            <Script
-              src="https://pl30130376.effectivecpmnetwork.com/34fe2f29c9e1aac5ce45d112f266a216/invoke.js"
-              strategy="afterInteractive"
-              data-cfasync="false"
-            />
-            <div id="container-34fe2f29c9e1aac5ce45d112f266a216"></div>
-
-            {/* Adsterra Native Banner */}
-            <Script
-              src="https://pl30130378.effectivecpmnetwork.com/cd/e2/88/cde288f0e69ef76da2f9b2dadf08213d.js"
-              strategy="afterInteractive"
-            />
-
-            {/* Adsterra Socialbar */}
-            <Script
-              src="https://www.effectivecpmnetwork.com/ncasjz39t2?key=e7b696d54319d28034a82ec0870d6078"
-              strategy="afterInteractive"
-            />
-          </>
-        )}
+        {/*
+          All advertising scripts (Google AdSense + Adsterra units) load through
+          this single route-aware component. It renders nothing on login,
+          registration, dashboard, admin, Watch and Earn, plan/redirect, API and
+          error screens — see components/SiteAds.tsx and lib/ad-eligibility.ts.
+        */}
+        <SiteAds />
       </body>
     </html>
   );
