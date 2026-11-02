@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import crypto from 'crypto';
+import { serverDownResponse } from '@/lib/is-server-down';
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -11,6 +12,9 @@ cloudinary.config({
 
 export async function POST(request: NextRequest) {
   try {
+    const down = await serverDownResponse();
+    if (down) return down;
+
     const body = await request.json();
     const { folder = 'uploads' } = body;
 

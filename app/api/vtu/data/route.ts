@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
 import { adminDb, FieldValue } from "@/lib/firebase-admin";
+import { serverDownResponse } from "@/lib/is-server-down";
 
 export async function POST(req: Request) {
   try {
+    const down = await serverDownResponse();
+    if (down) return down;
+
     const { userId, bundle_id, phone_number, amount, provider_id } = await req.json();
 
     if (!userId || !bundle_id || !phone_number || !amount) {

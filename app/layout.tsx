@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 import { ADSENSE_CLIENT_ID } from "@/lib/ads";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import SiteAds from "@/components/SiteAds";
+import ServerDownGate from "@/components/ServerDownGate";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -42,16 +43,18 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
-        <Toaster position="top-center" />
+        <ServerDownGate>
+          {children}
+          <Toaster position="top-center" />
 
-        {/*
-          All advertising scripts (Google AdSense + Adsterra units) load through
-          this single route-aware component. It renders nothing on login,
-          registration, dashboard, admin, Watch and Earn, plan/redirect, API and
-          error screens — see components/SiteAds.tsx and lib/ad-eligibility.ts.
-        */}
-        <SiteAds />
+          {/*
+            All advertising scripts (Google AdSense + Adsterra units) load through
+            this single route-aware component. It renders nothing on login,
+            registration, dashboard, admin, Watch and Earn, plan/redirect, API and
+            error screens — see components/SiteAds.tsx and lib/ad-eligibility.ts.
+          */}
+          <SiteAds />
+        </ServerDownGate>
       </body>
     </html>
   );

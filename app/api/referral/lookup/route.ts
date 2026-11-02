@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
+import { serverDownResponse } from "@/lib/is-server-down";
 
 /** Public lookup so registration can resolve invitation codes before auth. */
 export async function POST(req: Request) {
   try {
+    const down = await serverDownResponse();
+    if (down) return down;
+
     const { code } = await req.json();
     const normalized = typeof code === "string" ? code.trim().toUpperCase() : "";
 
